@@ -6,6 +6,9 @@
 // Triggered by .github/workflows/daily-alert.yml on a daily cron.
 // Requires SLACK_WEBHOOK env var (set as a GitHub Actions secret).
 
+const fs = require('fs');
+const path = require('path');
+
 const FIXTURES_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
 const SLACK_WEBHOOK = process.env.SLACK_WEBHOOK;
 
@@ -82,54 +85,12 @@ const TEAMS = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// PARTICIPANTS — keep in sync with the same array in index.html
-// Replace this whole array with your real draw results.
+// PARTICIPANTS — single source of truth, shared with index.html.
+// Edit ../participants.json to update the draw results.
 // ─────────────────────────────────────────────────────────────
-const PARTICIPANTS = [
-  { name:'Sarah M.',   teams:['England'],              slack:'@sarah.m'   },
-  { name:'James K.',   teams:['France'],               slack:'@james.k'   },
-  { name:'Priya R.',   teams:['Brazil'],               slack:'@priya.r'   },
-  { name:'Tom W.',     teams:['Spain'],                slack:'@tom.w'     },
-  { name:'Aisling O.', teams:['Argentina'],            slack:'@aisling.o' },
-  { name:'Ben F.',     teams:['Portugal'],             slack:'@ben.f'     },
-  { name:'Mei L.',     teams:['Germany'],              slack:'@mei.l'     },
-  { name:'Raj P.',     teams:['Netherlands'],          slack:'@raj.p'     },
-  { name:'Connor B.',  teams:['Belgium'],              slack:'@connor.b'  },
-  { name:'Fatima A.',  teams:['Morocco'],              slack:'@fatima.a'  },
-  { name:'Jake T.',    teams:['Colombia'],             slack:'@jake.t'    },
-  { name:'Lucy D.',    teams:['Japan'],                slack:'@lucy.d'    },
-  { name:'Kenny',      teams:['USA'],                  slack:'<@U0BAG7RDPFW>'  },
-  { name:'Sophie W.',  teams:['Uruguay'],              slack:'@sophie.w'  },
-  { name:'Tariq N.',   teams:['Croatia'],              slack:'@tariq.n'   },
-  { name:'Yuki S.',    teams:['Switzerland'],          slack:'@yuki.s'    },
-  { name:'Alex B.',    teams:['Mexico'],               slack:'@alex.b'    },
-  { name:'Dana H.',    teams:['Sweden'],               slack:'@dana.h'    },
-  { name:'Ellie M.',   teams:['Australia'],            slack:'@ellie.m'   },
-  { name:'Frank O.',   teams:['Ecuador'],              slack:'@frank.o'   },
-  { name:'Grace P.',   teams:['South Korea'],          slack:'@grace.p'   },
-  { name:'Harry S.',   teams:['Norway'],               slack:'@harry.s'   },
-  { name:'Isla T.',    teams:['Turkey'],               slack:'@isla.t'    },
-  { name:'Jordan V.',  teams:['Scotland'],             slack:'@jordan.v'  },
-  { name:'Karen W.',   teams:['Canada'],               slack:'@karen.w'   },
-  { name:'Leo X.',     teams:['Senegal'],              slack:'@leo.x'     },
-  { name:'Mia Y.',     teams:['South Africa'],         slack:'@mia.y'     },
-  { name:'Noel Z.',    teams:['Egypt'],                slack:'@noel.z'    },
-  { name:'Orla A.',    teams:['Iran'],                 slack:'@orla.a'    },
-  { name:'Pete B.',    teams:['Saudi Arabia'],         slack:'@pete.b'    },
-  { name:'Quinn C.',   teams:['Ghana'],                slack:'@quinn.c'   },
-  { name:'Rosa D.',    teams:['Austria'],              slack:'@rosa.d'    },
-  { name:'Sam E.',     teams:['Iraq'],                 slack:'@sam.e'     },
-  { name:'Tina F.',    teams:['Paraguay'],             slack:'@tina.f'    },
-  { name:'Umar G.',    teams:['Curaçao'],              slack:'@umar.g'    },
-  { name:'Vera H.',    teams:['Ivory Coast'],          slack:'@vera.h'    },
-  { name:'Will I.',    teams:['Tunisia'],              slack:'@will.i'    },
-  { name:'Xara J.',    teams:['Algeria'],              slack:'@xara.j'    },
-  { name:'Yasmin K.',  teams:['Uzbekistan','Bosnia & Herzegovina'], slack:'@yasmin.k' },
-  { name:'Zach L.',    teams:['Panama','Haiti'],                    slack:'@zach.l'   },
-  { name:'Amy N.',     teams:['Czech Republic','Qatar'],            slack:'@amy.n'    },
-  { name:'Brian Q.',   teams:['New Zealand','DR Congo'],            slack:'@brian.q'  },
-  { name:'Chloe R.',   teams:['Cape Verde','Jordan'],               slack:'@chloe.r'  },
-];
+const PARTICIPANTS = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', 'participants.json'), 'utf8')
+);
 
 // ─────────────────────────────────────────────────────────────
 // Helpers

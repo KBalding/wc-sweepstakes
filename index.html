@@ -627,7 +627,6 @@
   <button onclick="showView('sweep',this)">Sweepstakes</button>
   <button onclick="showView('journey',this)">Team Journey</button>
   <button onclick="showView('odds',this)">Tournament Odds</button>
-  <button onclick="showView('slack',this)">⚡ Slack Setup</button>
 </nav>
 
 <main>
@@ -679,62 +678,6 @@
         <div>#</div><div>Team</div><div>UK Odds</div><div>US Odds</div><div>Win %</div><div>Implied</div>
       </div>
       <div id="odds-rows"></div>
-    </div>
-  </div>
-
-  <!-- SLACK -->
-  <div class="view" id="view-slack">
-    <div class="eyebrow">Slack Integration · <span class="accent">Match Day Alerts</span></div>
-    <h2>Slack Setup</h2>
-
-    <div class="slack-card">
-      <h3>Daily Match Alerts</h3>
-      <p>Each match day, the bot posts to your channel. Since every team is owned, <strong>every fixture is a head-to-head between two colleagues</strong>. The message tags both, shows team odds, and lays down the bragging-rights challenge. Fixtures are pulled live from <a href="https://github.com/openfootball/worldcup.json" target="_blank" style="color:var(--ometis-orange)">openfootball</a> — no manual updates needed for the whole tournament.</p>
-      <div class="notif-preview">
-        <div class="notif-app">⚽ WC26 Sweepstakes</div>
-        <div class="notif-body">
-          <strong>⚔ Today's head-to-heads</strong><br><br>
-          <span class="grn">🟢 Group L  ·  21:00 BST  ·  Dallas</span><br>
-          <span class="hi">@sarah.m</span> 🏴󠁧󠁢󠁥󠁮󠁧󠁿 <strong>England</strong>  ⚔  <strong>Croatia</strong> 🇭🇷 <span class="hi">@tariq.n</span><br>
-          Outright: <span class="hi">Eng 7/1 · Cro 50/1</span><br><br>
-          <span class="grn">🟢 Group I  ·  23:00 BST  ·  Atlanta</span><br>
-          <span class="hi">@james.k</span> 🇫🇷 <strong>France</strong>  ⚔  <strong>Senegal</strong> 🇸🇳 <span class="hi">@leo.x</span><br>
-          Outright: <span class="hi">Fra 5/1 · Sen 80/1</span><br><br>
-          <span style="color:#888">☕ on the line. Or pride. Or both.</span>
-        </div>
-      </div>
-      <div class="webhook-row">
-        <input class="webhook-input" id="webhook-url" placeholder="https://hooks.slack.com/services/T.../B.../...">
-        <button class="btn-primary" onclick="saveWebhook()">Save webhook</button>
-        <button class="btn-ghost" onclick="testWebhook()">Test ping</button>
-      </div>
-      <p style="font-size:11px;color:#555;margin-top:8px;margin-bottom:0">Create at: Slack → Your Apps → Incoming Webhooks → Add to workspace</p>
-    </div>
-
-    <div class="slack-card">
-      <h3>How to automate it</h3>
-      <p>This is a static HTML file, so Slack pings need a small external cron. Simplest free option: a GitHub Actions workflow that runs at 9am daily. Paste your webhook URL and participant list into the environment.</p>
-      <div class="code-block">
-<span class="c"># .github/workflows/daily-alert.yml</span>
-<span class="k">name:</span> <span class="s">Daily WC26 Slack alert</span>
-<span class="k">on:</span>
-  <span class="k">schedule:</span>
-    - <span class="k">cron:</span> <span class="s">'0 8 * 6,7 *'</span>  <span class="c"># 08:00 UTC = 09:00 BST daily in Jun/Jul</span>
-  <span class="k">workflow_dispatch:</span>
-
-<span class="k">jobs:</span>
-  <span class="k">alert:</span>
-    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
-    <span class="k">steps:</span>
-      - <span class="k">uses:</span> <span class="s">actions/checkout@v4</span>
-      - <span class="k">uses:</span> <span class="s">actions/setup-node@v4</span>
-        <span class="k">with:</span> { <span class="k">node-version:</span> <span class="s">'20'</span> }
-      - <span class="k">run:</span> <span class="s">node scripts/notify.js</span>
-        <span class="k">env:</span>
-          <span class="k">SLACK_WEBHOOK:</span> <span class="v">${{ secrets.SLACK_WEBHOOK }}</span></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn-ghost" onclick="alert('Ask Claude to generate scripts/wc26-notify.js for your full participant list')">📋 Generate Node.js script</button>
-      </div>
     </div>
   </div>
 
@@ -820,54 +763,20 @@ const TEAMS = {
   "Panama":              {flag:"🇵🇦",group:"L",conf:"CONCACAF", odds_frac:"500/1",odds_us:"+50000",win_pct:0.2},
 };
 
-// ── REPLACE THIS ARRAY WITH YOUR REAL DRAW RESULTS ──
-const PARTICIPANTS = [
-  // 38 single-team entries
-  { name:"Sarah M.",   teams:["England"],              slack:"@sarah.m"   },
-  { name:"James K.",   teams:["France"],               slack:"@james.k"   },
-  { name:"Priya R.",   teams:["Brazil"],               slack:"@priya.r"   },
-  { name:"Tom W.",     teams:["Spain"],                slack:"@tom.w"     },
-  { name:"Aisling O.", teams:["Argentina"],            slack:"@aisling.o" },
-  { name:"Ben F.",     teams:["Portugal"],             slack:"@ben.f"     },
-  { name:"Mei L.",     teams:["Germany"],              slack:"@mei.l"     },
-  { name:"Raj P.",     teams:["Netherlands"],          slack:"@raj.p"     },
-  { name:"Connor B.",  teams:["Belgium"],              slack:"@connor.b"  },
-  { name:"Fatima A.",  teams:["Morocco"],              slack:"@fatima.a"  },
-  { name:"Jake T.",    teams:["Colombia"],             slack:"@jake.t"    },
-  { name:"Lucy D.",    teams:["Japan"],                slack:"@lucy.d"    },
-  { name:"Marcus E.",  teams:["USA"],                  slack:"@marcus.e"  },
-  { name:"Sophie W.",  teams:["Uruguay"],              slack:"@sophie.w"  },
-  { name:"Tariq N.",   teams:["Croatia"],              slack:"@tariq.n"   },
-  { name:"Yuki S.",    teams:["Switzerland"],          slack:"@yuki.s"    },
-  { name:"Alex B.",    teams:["Mexico"],               slack:"@alex.b"    },
-  { name:"Dana H.",    teams:["Sweden"],               slack:"@dana.h"    },
-  { name:"Ellie M.",   teams:["Australia"],            slack:"@ellie.m"   },
-  { name:"Frank O.",   teams:["Ecuador"],              slack:"@frank.o"   },
-  { name:"Grace P.",   teams:["South Korea"],          slack:"@grace.p"   },
-  { name:"Harry S.",   teams:["Norway"],               slack:"@harry.s"   },
-  { name:"Isla T.",    teams:["Turkey"],               slack:"@isla.t"    },
-  { name:"Jordan V.",  teams:["Scotland"],             slack:"@jordan.v"  },
-  { name:"Karen W.",   teams:["Canada"],               slack:"@karen.w"   },
-  { name:"Leo X.",     teams:["Senegal"],              slack:"@leo.x"     },
-  { name:"Mia Y.",     teams:["South Africa"],         slack:"@mia.y"     },
-  { name:"Noel Z.",    teams:["Egypt"],                slack:"@noel.z"    },
-  { name:"Orla A.",    teams:["Iran"],                 slack:"@orla.a"    },
-  { name:"Pete B.",    teams:["Saudi Arabia"],         slack:"@pete.b"    },
-  { name:"Quinn C.",   teams:["Ghana"],                slack:"@quinn.c"   },
-  { name:"Rosa D.",    teams:["Austria"],              slack:"@rosa.d"    },
-  { name:"Sam E.",     teams:["Iraq"],                 slack:"@sam.e"     },
-  { name:"Tina F.",    teams:["Paraguay"],             slack:"@tina.f"    },
-  { name:"Umar G.",    teams:["Curaçao"],              slack:"@umar.g"    },
-  { name:"Vera H.",    teams:["Ivory Coast"],          slack:"@vera.h"    },
-  { name:"Will I.",    teams:["Tunisia"],              slack:"@will.i"    },
-  { name:"Xara J.",    teams:["Algeria"],              slack:"@xara.j"    },
-  // 5 people with 2 teams (38 + 10 = 48 total)
-  { name:"Yasmin K.",  teams:["Uzbekistan","Bosnia & Herzegovina"], slack:"@yasmin.k"  },
-  { name:"Zach L.",    teams:["Panama","Haiti"],                    slack:"@zach.l"    },
-  { name:"Amy N.",     teams:["Czech Republic","Qatar"],            slack:"@amy.n"     },
-  { name:"Brian Q.",   teams:["New Zealand","DR Congo"],            slack:"@brian.q"   },
-  { name:"Chloe R.",   teams:["Cape Verde","Jordan"],               slack:"@chloe.r"   },
-];
+// PARTICIPANTS — single source of truth in participants.json (shared with
+// scripts/notify.js). Loaded at startup by loadParticipants().
+let PARTICIPANTS = [];
+
+async function loadParticipants() {
+  try {
+    const resp = await fetch('participants.json');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    PARTICIPANTS = await resp.json();
+  } catch(e) {
+    console.error('Could not load participants.json:', e);
+    PARTICIPANTS = [];
+  }
+}
 
 // Fixtures are fetched live from openfootball — see fetchFixtures() below
 const FIXTURES_URL = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
@@ -930,38 +839,54 @@ function getTodayFixtures() {
   return ALL_FIXTURES.filter(f => f.bstDate === today);
 }
 
-const JOURNEYS = {
-  "England": [
-    {stage:"Group L — Game 1", match:"England 🏴󠁧󠁢󠁥󠁮󠁧󠁿 vs Croatia 🇭🇷", date:"17 Jun", result:null, status:"upcoming"},
-    {stage:"Group L — Game 2", match:"England 🏴󠁧󠁢󠁥󠁮󠁧󠁿 vs Ghana 🇬🇭",   date:"23 Jun", result:null, status:"upcoming"},
-    {stage:"Group L — Game 3", match:"Panama 🇵🇦 vs England 🏴󠁧󠁢󠁥󠁮󠁧󠁿",   date:"27 Jun", result:null, status:"upcoming"},
-    {stage:"Round of 32",      match:"TBD", date:"~2 Jul",  result:null, status:"pending"},
-    {stage:"Round of 16",      match:"TBD", date:"~7 Jul",  result:null, status:"pending"},
-    {stage:"Quarter-final",    match:"TBD", date:"~10 Jul", result:null, status:"pending"},
-    {stage:"Semi-final",       match:"TBD", date:"~14 Jul", result:null, status:"pending"},
-    {stage:"Final",            match:"TBD", date:"19 Jul",  result:null, status:"pending"},
-  ],
-  "Brazil": [
-    {stage:"Group C — Game 1", match:"Brazil 🇧🇷 vs Morocco 🇲🇦",   date:"12 Jun", result:null, status:"current"},
-    {stage:"Group C — Game 2", match:"Brazil 🇧🇷 vs Nigeria 🇳🇬",   date:"TBC",    result:null, status:"upcoming"},
-    {stage:"Group C — Game 3", match:"Venezuela 🇻🇪 vs Brazil 🇧🇷", date:"TBC",    result:null, status:"upcoming"},
-    {stage:"Round of 32",      match:"TBD", date:"~2 Jul",  result:null, status:"pending"},
-    {stage:"Round of 16",      match:"TBD", date:"~7 Jul",  result:null, status:"pending"},
-    {stage:"Quarter-final",    match:"TBD", date:"~10 Jul", result:null, status:"pending"},
-    {stage:"Semi-final",       match:"TBD", date:"~14 Jul", result:null, status:"pending"},
-    {stage:"Final",            match:"TBD", date:"19 Jul",  result:null, status:"pending"},
-  ],
-  "Spain": [
-    {stage:"Group H — Game 1", match:"Spain 🇪🇸 vs Algeria 🇩🇿", date:"TBC", result:null, status:"upcoming"},
-    {stage:"Group H — Game 2", match:"Spain 🇪🇸 vs Ukraine 🇺🇦", date:"TBC", result:null, status:"upcoming"},
-    {stage:"Group H — Game 3", match:"TBD vs Spain 🇪🇸",          date:"TBC", result:null, status:"upcoming"},
-    {stage:"Round of 32",      match:"TBD", date:"~2 Jul",  result:null, status:"pending"},
-    {stage:"Round of 16",      match:"TBD", date:"~7 Jul",  result:null, status:"pending"},
-    {stage:"Quarter-final",    match:"TBD", date:"~10 Jul", result:null, status:"pending"},
-    {stage:"Semi-final",       match:"TBD", date:"~14 Jul", result:null, status:"pending"},
-    {stage:"Final",            match:"TBD", date:"19 Jul",  result:null, status:"pending"},
-  ],
-};
+// Journeys are built on the fly from the live openfootball fixtures
+// (see buildJourney). The knockout rounds are appended as placeholders
+// since the bracket isn't known until the group stage finishes.
+const KNOCKOUT_STAGES = [
+  {stage:"Round of 32",   date:"~2 Jul"},
+  {stage:"Round of 16",   date:"~7 Jul"},
+  {stage:"Quarter-final", date:"~10 Jul"},
+  {stage:"Semi-final",    date:"~14 Jul"},
+  {stage:"Final",         date:"19 Jul"},
+];
+
+// Build a team's full path from the fetched fixtures. Returns an array of
+// stage rows (group games from real data + knockout placeholders).
+function buildJourney(name) {
+  const today = getTodayBSTDate();
+  const flag = t => TEAMS[t]?.flag || '🏳️';
+
+  // Every group fixture this team appears in, in date order
+  const teamFixtures = ALL_FIXTURES
+    .filter(f => f.teamA === name || f.teamB === name)
+    .sort((a,b) => (a.bstDate||'').localeCompare(b.bstDate||''));
+
+  const dateLabel = bstDate => {
+    if (!bstDate) return 'TBC';
+    const d = new Date(bstDate + 'T12:00:00Z');
+    return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', timeZone:'UTC'});
+  };
+
+  const groupRows = teamFixtures.map((f, i) => {
+    let status = 'upcoming';
+    if (f.bstDate && f.bstDate < today) status = 'completed';
+    else if (f.bstDate === today) status = 'current';
+    const grp = f.group ? `Group ${f.group} — Game ${i+1}` : (f.round || 'Group stage');
+    return {
+      stage: grp,
+      match: `${f.teamA} ${flag(f.teamA)} vs ${flag(f.teamB)} ${f.teamB}`,
+      date: dateLabel(f.bstDate),
+      result: null,
+      status,
+    };
+  });
+
+  const knockoutRows = KNOCKOUT_STAGES.map(k => ({
+    stage: k.stage, match: 'TBD', date: k.date, result: null, status: 'pending',
+  }));
+
+  return [...groupRows, ...knockoutRows];
+}
 
 // ═══════════════════════════════════════════════════════
 // STATIC ODDS — refresh by asking Claude for an updated file
@@ -976,8 +901,11 @@ async function init() {
   const dateStr = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
   document.getElementById('today-eyebrow').innerHTML = `Today · <span class="accent">${dateStr}</span>`;
   document.getElementById('fixtures-date').textContent = dateStr;
-  document.getElementById('sweep-count').textContent = `${PARTICIPANTS.length} People`;
   document.getElementById('odds-source-label').textContent = '· live data via openfootball';
+
+  // Load the shared participant list before rendering anything that uses it
+  await loadParticipants();
+  document.getElementById('sweep-count').textContent = `${PARTICIPANTS.length} People`;
 
   // Render the non-fixture views right away
   renderAllParticipants();
@@ -1084,10 +1012,14 @@ function filterParticipants() { renderAllParticipants(document.getElementById('s
 // JOURNEY
 function renderJourneyPicker() {
   const el = document.getElementById('journey-picker');
-  const names = [...new Set([...Object.keys(JOURNEYS), ...PARTICIPANTS.flatMap(p=>p.teams)])].slice(0,24);
+  // Every team in the tournament, grouped A–L then alphabetical
+  const names = Object.keys(TEAMS).sort((a,b) => {
+    const ga = TEAMS[a].group, gb = TEAMS[b].group;
+    return ga === gb ? a.localeCompare(b) : ga.localeCompare(gb);
+  });
   el.innerHTML = names.map(n => {
     const td = TEAMS[n];
-    return `<button onclick="showJourney('${n}',this)">${td?.flag||'🏳️'} ${n}</button>`;
+    return `<button onclick="showJourney('${n.replace(/'/g,"\\'")}',this)">${td?.flag||'🏳️'} ${n}</button>`;
   }).join('');
 }
 
@@ -1095,10 +1027,10 @@ function showJourney(name, btn) {
   document.querySelectorAll('.journey-picker button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const td = TEAMS[name];
-  const journey = JOURNEYS[name];
+  const journey = buildJourney(name);
   const owner = PARTICIPANTS.find(p=>p.teams.includes(name));
   const icons = {upcoming:'📅',current:'⚽',pending:'🔒',completed:'✅'};
-  const stagesHtml = journey
+  const stagesHtml = journey.length
     ? journey.map(s=>`<div class="stage-row ${s.status}">
         <div class="stage-icon">${icons[s.status]||'📅'}</div>
         <div class="stage-info">
@@ -1106,10 +1038,10 @@ function showJourney(name, btn) {
           <div class="stage-detail">${s.match} · ${s.date}</div>
         </div>
         <div class="stage-result ${s.result?'win':s.status==='current'?'':'tbd'}">
-          ${s.result || (s.status==='current'?'Live now':s.status==='upcoming'?'Upcoming':'—')}
+          ${s.result || (s.status==='current'?'Live now':s.status==='completed'?'Played':s.status==='upcoming'?'Upcoming':'—')}
         </div>
       </div>`).join('')
-    : `<div class="empty"><div>Full schedule for ${name} loading…</div></div>`;
+    : `<div class="empty"><div>No fixtures found for ${name} yet.</div></div>`;
 
   document.getElementById('journey-content').innerHTML = `
     <div class="journey-hero">
@@ -1189,19 +1121,6 @@ function openModal(name) {
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(e) { if(e.target.id==='modal') document.getElementById('modal').classList.remove('open'); }
-
-// SLACK
-function saveWebhook() {
-  const url = document.getElementById('webhook-url').value.trim();
-  if (!url.startsWith('https://hooks.slack.com/')) { alert('Please enter a valid Slack webhook URL'); return; }
-  localStorage.setItem('wc26_webhook', url);
-  alert('✅ Saved! Wire this URL into your cron script and you\'re live.');
-}
-function testWebhook() {
-  const url = localStorage.getItem('wc26_webhook') || document.getElementById('webhook-url').value.trim();
-  if (!url) { alert('Save a webhook URL first'); return; }
-  alert(`Would POST to:\n${url}\n\nWire this up in your Node.js script to fire the actual ping.`);
-}
 
 init();
 </script>
