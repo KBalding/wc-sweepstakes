@@ -275,6 +275,16 @@
     font-size: 18px; font-weight: 800;
     color: var(--ometis-orange); letter-spacing: -0.5px;
   }
+  .h2h-score {
+    font-size: 24px; font-weight: 800; color: var(--chalk);
+    letter-spacing: -0.5px; white-space: nowrap; text-align: center;
+  }
+  .h2h-score-dash { color: var(--chalk-faint); margin: 0 3px; font-weight: 600; }
+  .ft-tag {
+    color: var(--green); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .h2h-card.is-played { border-color: var(--green); }
   .h2h-odds {
     margin-top: 14px; display: flex; gap: 8px; justify-content: center;
     padding-top: 12px; border-top: 1px solid rgba(232,101,26,0.15);
@@ -409,6 +419,7 @@
   .stage-result { font-size: 15px; font-weight: 700; }
   .stage-result.win { color: var(--green); }
   .stage-result.loss { color: var(--red); }
+  .stage-result.draw { color: var(--ometis-orange); }
   .stage-result.tbd { color: var(--chalk-faint); font-size: 12px; font-weight: 400; }
 
   /* ── ODDS TABLE ── */
@@ -805,6 +816,8 @@ function getTodayBSTDate() {
 // Normalize an openfootball fixture into our internal shape
 function normalizeFixture(raw) {
   const bst = toBST(raw.time || '', raw.date || '');
+  // Full-time score [team1, team2] once the match has been played
+  const ft = raw.score && Array.isArray(raw.score.ft) ? raw.score.ft : null;
   return {
     teamA: raw.team1,
     teamB: raw.team2,
@@ -814,6 +827,9 @@ function normalizeFixture(raw) {
     time: bst.timeStr,
     bstDate: bst.dateStr,
     rawDate: raw.date,
+    scoreA: ft ? ft[0] : null,
+    scoreB: ft ? ft[1] : null,
+    played: !!ft,
   };
 }
 
@@ -868,15 +884,30 @@ function buildJourney(name) {
   };
 
   const groupRows = teamFixtures.map((f, i) => {
+    // A score is the definitive signal a game is done; fall back to date.
     let status = 'upcoming';
-    if (f.bstDate && f.bstDate < today) status = 'completed';
+    if (f.played) status = 'completed';
+    else if (f.bstDate && f.bstDate < today) status = 'completed';
     else if (f.bstDate === today) status = 'current';
+
+    // Result from this team's perspective: W / L / D + scoreline
+    let result = null, outcome = null;
+    if (f.played) {
+      const isA = f.teamA === name;
+      const my = isA ? f.scoreA : f.scoreB;
+      const opp = isA ? f.scoreB : f.scoreA;
+      outcome = my > opp ? 'win' : my < opp ? 'loss' : 'draw';
+      const letter = outcome === 'win' ? 'W' : outcome === 'loss' ? 'L' : 'D';
+      result = `${letter} ${f.scoreA}–${f.scoreB}`;
+    }
+
     const grp = f.group ? `Group ${f.group} — Game ${i+1}` : (f.round || 'Group stage');
     return {
       stage: grp,
       match: `${f.teamA} ${flag(f.teamA)} vs ${flag(f.teamB)} ${f.teamB}`,
       date: dateLabel(f.bstDate),
-      result: null,
+      result,
+      outcome,
       status,
     };
   });
@@ -954,10 +985,15 @@ function renderTodayMatches() {
     const tA = TEAMS[m.teamA], tB = TEAMS[m.teamB];
     const selfClash = pA && pB && pA.name === pB.name;
     const groupLabel = m.group ? `Group ${m.group}` : (m.round || 'Knockout');
-    return `<div class="h2h-card ${selfClash ? 'self-clash' : ''}">
+    // Once played, show the scoreline in place of the ⚔ and a Full time tag
+    const centre = m.played
+      ? `<div class="h2h-score">${m.scoreA}<span class="h2h-score-dash">–</span>${m.scoreB}</div>`
+      : `<div class="h2h-vs">⚔</div>`;
+    const statusTag = m.played ? ` · <span class="ft-tag">Full time</span>` : '';
+    return `<div class="h2h-card ${selfClash ? 'self-clash' : ''} ${m.played ? 'is-played' : ''}">
       <div class="h2h-meta">
         <span class="vs-pill">${selfClash ? 'SELF' : 'VS'}</span>
-        ${groupLabel} · 🕐 ${m.time}${m.ground ? ` · 📍 ${m.ground}` : ''}
+        ${groupLabel} · 🕐 ${m.time}${m.ground ? ` · 📍 ${m.ground}` : ''}${statusTag}
       </div>
       <div class="h2h-row">
         <div class="h2h-side">
@@ -966,7 +1002,7 @@ function renderTodayMatches() {
           <div class="h2h-team"><span class="tf">${tA?.flag||'🏳️'}</span>${m.teamA}</div>
           <div class="h2h-team-odds">${tA?.odds_frac||'—'} to win cup</div>
         </div>
-        <div class="h2h-vs">⚔</div>
+        ${centre}
         <div class="h2h-side right">
           <div class="h2h-person">${pB ? pB.name : '<span style="color:var(--chalk-faint)">Unassigned</span>'}</div>
           <div class="h2h-slack">${pB ? pB.slack : '—'}</div>
@@ -1030,6 +1066,7 @@ function showJourney(name, btn) {
   const journey = buildJourney(name);
   const owner = PARTICIPANTS.find(p=>p.teams.includes(name));
   const icons = {upcoming:'📅',current:'⚽',pending:'🔒',completed:'✅'};
+  const resultClass = {win:'win', loss:'loss', draw:'draw'};
   const stagesHtml = journey.length
     ? journey.map(s=>`<div class="stage-row ${s.status}">
         <div class="stage-icon">${icons[s.status]||'📅'}</div>
@@ -1037,8 +1074,8 @@ function showJourney(name, btn) {
           <div class="stage-name">${s.stage}</div>
           <div class="stage-detail">${s.match} · ${s.date}</div>
         </div>
-        <div class="stage-result ${s.result?'win':s.status==='current'?'':'tbd'}">
-          ${s.result || (s.status==='current'?'Live now':s.status==='completed'?'Played':s.status==='upcoming'?'Upcoming':'—')}
+        <div class="stage-result ${s.result ? (resultClass[s.outcome]||'') : s.status==='current'?'':'tbd'}">
+          ${s.result || (s.status==='current'?'Live now':s.status==='upcoming'?'Upcoming':'—')}
         </div>
       </div>`).join('')
     : `<div class="empty"><div>No fixtures found for ${name} yet.</div></div>`;
