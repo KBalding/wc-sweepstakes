@@ -68,6 +68,14 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Twemoji flag/emoji images: sit inline, scale with surrounding text. */
+  img.twemoji, img.emoji {
+    height: 1em; width: 1em;
+    margin: 0 0.05em 0 0.05em;
+    vertical-align: -0.12em;
+    display: inline-block;
+  }
+
   /* ── HEADER ── */
   header {
     background: var(--masters-green);
@@ -774,6 +782,10 @@
   </div>
 </div>
 
+<!-- Twemoji: render emoji (esp. flag emoji) as images so they show on Windows,
+     which has no native flag glyphs. -->
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
+
 <script>
 // ═══════════════════════════════════════════════════════
 // DATA
@@ -1416,7 +1428,34 @@ function openModal(name) {
 }
 function closeModal(e) { if(e.target.id==='modal') document.getElementById('modal').classList.remove('open'); }
 
+// ── EMOJI → IMAGES (Windows flag fix) ──
+// The views re-render their HTML dynamically, so rather than call twemoji after
+// each render, watch the DOM and twemojify any newly-added content once.
+function twemojify(root) {
+  if (window.twemoji) {
+    twemoji.parse(root || document.body, { folder: 'svg', ext: '.svg', className: 'twemoji' });
+  }
+}
+function startEmojiObserver() {
+  if (!window.twemoji) return;          // library failed to load — fall back to native emoji
+  const opts = { childList: true, subtree: true };
+  let queued = false;
+  const obs = new MutationObserver(() => {
+    if (queued) return;                 // coalesce bursts of mutations into one parse
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      obs.disconnect();                 // ignore the <img> swaps twemoji itself makes
+      twemojify(document.body);
+      obs.observe(document.body, opts);
+    });
+  });
+  twemojify(document.body);             // initial pass
+  obs.observe(document.body, opts);
+}
+
 init();
+startEmojiObserver();
 </script>
 </body>
 </html>
