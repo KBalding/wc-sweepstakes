@@ -84,6 +84,20 @@ const TEAMS = {
   'Panama':              { flag:'🇵🇦', group:'L', odds:'500/1' },
 };
 
+// Overlay live odds (refreshed daily by fetch-odds.js into odds.json) onto the
+// baseline TEAMS above. Teams the bookmakers don't list keep their fallback odds.
+try {
+  const oddsPath = path.join(__dirname, '..', 'odds.json');
+  if (fs.existsSync(oddsPath)) {
+    const live = JSON.parse(fs.readFileSync(oddsPath, 'utf8'));
+    for (const [name, o] of Object.entries(live.teams || {})) {
+      if (TEAMS[name] && o.odds) TEAMS[name].odds = o.odds;
+    }
+  }
+} catch (e) {
+  console.warn('Live odds unavailable, using built-in odds:', e.message);
+}
+
 // ─────────────────────────────────────────────────────────────
 // PARTICIPANTS — single source of truth, shared with index.html.
 // Edit ../participants.json to update the draw results.

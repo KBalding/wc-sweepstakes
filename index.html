@@ -261,9 +261,6 @@
   .h2h-person {
     font-size: 14px; font-weight: 700; color: var(--chalk);
   }
-  .h2h-slack {
-    font-size: 11px; color: var(--chalk-faint);
-  }
   .h2h-team {
     display: flex; align-items: center; gap: 6px;
     font-size: 13px; font-weight: 600; color: var(--ometis-orange);
@@ -342,7 +339,6 @@
   .p-card:hover { border-color: var(--ometis-border2); transform: translateY(-1px); background: var(--ometis-dark3); }
   .p-card.playing { border-color: var(--ometis-orange-d); }
   .p-name { font-size: 12px; color: var(--chalk-dim); font-weight: 500; margin-bottom: 5px; }
-  .p-slack { font-size: 11px; color: var(--chalk-faint); }
   .p-team {
     font-size: 19px; font-weight: 700; letter-spacing: -0.3px;
     display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
@@ -509,37 +505,6 @@
   .moc-col.fav .moc-price { color: var(--ometis-orange); }
   .moc-col.loading .moc-price { color: var(--chalk-faint); animation: shimmer 1.4s infinite; }
 
-  /* ── SLACK ── */
-  .slack-card { background: var(--ometis-dark2); border: 1px solid var(--ometis-border); border-radius: 8px; padding: 24px 26px; margin-bottom: 16px; }
-  .slack-card h3 { font-size: 16px; font-weight: 700; color: var(--chalk); margin-bottom: 8px; }
-  .slack-card p { font-size: 13px; color: var(--chalk-faint); line-height: 1.7; margin-bottom: 14px; }
-  .notif-preview { background: #0f0a14; border-left: 3px solid #4A154B; border-radius: 4px; padding: 14px 16px; margin: 14px 0; }
-  .notif-app { font-size: 12px; font-weight: 700; color: #b388ff; margin-bottom: 5px; }
-  .notif-body { font-size: 13px; line-height: 1.7; color: var(--chalk-dim); }
-  .notif-body .hi { color: var(--ometis-orange); font-weight: 600; }
-  .notif-body .grn { color: var(--green); }
-  .code-block {
-    background: #111; border: 1px solid var(--ometis-border2);
-    border-radius: 6px; padding: 16px 18px;
-    font-family: 'Courier New', monospace; font-size: 12px;
-    color: var(--chalk); overflow-x: auto; line-height: 1.8;
-    margin-bottom: 12px;
-  }
-  .code-block .c { color: #558c55; }
-  .code-block .k { color: #79b8ff; }
-  .code-block .s { color: #b5e853; }
-  .code-block .v { color: var(--ometis-orange); }
-  .webhook-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .webhook-input {
-    flex: 1; min-width: 240px;
-    background: #111;
-    border: 1px solid var(--ometis-border);
-    color: var(--chalk);
-    padding: 9px 14px; border-radius: 6px;
-    font-family: 'Courier New', monospace; font-size: 12px;
-    outline: none; transition: border-color 0.15s;
-  }
-  .webhook-input:focus { border-color: var(--ometis-orange); }
   .btn-primary {
     background: var(--ometis-orange); color: #fff;
     border: none; padding: 9px 20px; border-radius: 6px;
@@ -774,6 +739,29 @@ const TEAMS = {
   "Panama":              {flag:"🇵🇦",group:"L",conf:"CONCACAF", odds_frac:"500/1",odds_us:"+50000",win_pct:0.2},
 };
 
+// Live odds overlay. The TEAMS object above is the baseline/fallback; odds.json
+// (refreshed daily by scripts/fetch-odds.js) overlays live odds_frac/odds_us/
+// win_pct for whatever teams the bookmakers list. Teams not in odds.json keep
+// their hardcoded values, so nothing ever goes blank.
+let ODDS_UPDATED = null;
+
+async function applyLiveOdds() {
+  try {
+    const resp = await fetch('odds.json', { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    ODDS_UPDATED = data.generated || null;
+    for (const [name, o] of Object.entries(data.teams || {})) {
+      if (!TEAMS[name]) continue;
+      if (o.odds_frac) TEAMS[name].odds_frac = o.odds_frac;
+      if (o.odds_us)   TEAMS[name].odds_us   = o.odds_us;
+      if (o.win_pct != null) TEAMS[name].win_pct = o.win_pct;
+    }
+  } catch (e) {
+    console.warn('Live odds unavailable, using built-in odds:', e.message);
+  }
+}
+
 // PARTICIPANTS — single source of truth in participants.json (shared with
 // scripts/notify.js). Loaded at startup by loadParticipants().
 let PARTICIPANTS = [];
@@ -934,9 +922,13 @@ async function init() {
   document.getElementById('fixtures-date').textContent = dateStr;
   document.getElementById('odds-source-label').textContent = '· live data via openfootball';
 
-  // Load the shared participant list before rendering anything that uses it
-  await loadParticipants();
+  // Load shared participants + live odds before rendering anything that uses them
+  await Promise.all([loadParticipants(), applyLiveOdds()]);
   document.getElementById('sweep-count').textContent = `${PARTICIPANTS.length} People`;
+  if (ODDS_UPDATED) {
+    const upd = new Date(ODDS_UPDATED).toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+    document.getElementById('odds-source-label').textContent = `· live data via openfootball · odds updated ${upd}`;
+  }
 
   // Render the non-fixture views right away
   renderAllParticipants();
@@ -998,14 +990,12 @@ function renderTodayMatches() {
       <div class="h2h-row">
         <div class="h2h-side">
           <div class="h2h-person">${pA ? pA.name : '<span style="color:var(--chalk-faint)">Unassigned</span>'}</div>
-          <div class="h2h-slack">${pA ? pA.slack : '—'}</div>
           <div class="h2h-team"><span class="tf">${tA?.flag||'🏳️'}</span>${m.teamA}</div>
           <div class="h2h-team-odds">${tA?.odds_frac||'—'} to win cup</div>
         </div>
         ${centre}
         <div class="h2h-side right">
           <div class="h2h-person">${pB ? pB.name : '<span style="color:var(--chalk-faint)">Unassigned</span>'}</div>
-          <div class="h2h-slack">${pB ? pB.slack : '—'}</div>
           <div class="h2h-team"><span class="tf">${tB?.flag||'🏳️'}</span>${m.teamB}</div>
           <div class="h2h-team-odds">${tB?.odds_frac||'—'} to win cup</div>
         </div>
@@ -1034,7 +1024,7 @@ function renderAllParticipants(filter='') {
     const main = p.teams[0]; const td = TEAMS[main];
     const extra = p.teams.slice(1);
     return `<div class="p-card ${play ? 'playing' : ''}" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">
-      <div class="p-name">${p.name} <span class="p-slack">${p.slack}</span></div>
+      <div class="p-name">${p.name}</div>
       <div class="p-team"><span class="p-flag">${td?.flag||'🏳️'}</span>${main}</div>
       ${extra.length ? `<div class="p-extra">${extra.map(t=>`${TEAMS[t]?.flag||''} ${t}`).join(' · ')}</div>` : ''}
       ${p.teams.length === 2 ? `<div class="two-team-tag">2-team draw</div>` : ''}
@@ -1140,7 +1130,7 @@ function openModal(name) {
   }).join('');
   document.getElementById('modal-body').innerHTML = `
     <h3>${p.name}</h3>
-    <div class="modal-sub">${p.slack} · ${p.teams.length} team${p.teams.length!==1?'s':''}</div>
+    <div class="modal-sub">${p.teams.length} team${p.teams.length!==1?'s':''}</div>
     <div class="modal-stats">
       <div class="modal-stat">
         <div class="modal-stat-label">Best odds</div>

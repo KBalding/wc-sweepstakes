@@ -1,0 +1,37 @@
+name: Update WC26 odds
+
+# Refreshes tournament outright odds from The Odds API and commits odds.json.
+# Both index.html and scripts/notify.js read that file.
+on:
+  schedule:
+    # 07:30 UTC daily — runs ahead of the 08:00 Slack alert so notify.js
+    # picks up fresh odds. Cron is UTC: minute hour day month weekday.
+    - cron: '30 7 * 6,7 *'
+  workflow_dispatch:  # Allow manual triggering from the Actions tab
+
+permissions:
+  contents: write  # needed to commit odds.json back to the repo
+
+jobs:
+  update-odds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Fetch latest odds
+        run: node scripts/fetch-odds.js
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+      - name: Commit odds.json if changed
+        run: |
+          if [[ -n "$(git status --porcelain odds.json)" ]]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add odds.json
+            git commit -m "chore: refresh WC26 odds"
+            git push
+          else
+            echo "No odds changes to commit."
+          fi
