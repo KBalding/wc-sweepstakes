@@ -98,7 +98,7 @@ const PARTICIPANTS = [
   { name:'Fatima A.',  teams:['Morocco'],              slack:'@fatima.a'  },
   { name:'Jake T.',    teams:['Colombia'],             slack:'@jake.t'    },
   { name:'Lucy D.',    teams:['Japan'],                slack:'@lucy.d'    },
-  { name:'Marcus E.',  teams:['USA'],                  slack:'@marcus.e'  },
+  { name:'Kenny',      teams:['USA'],                  slack:'U0BAG7RDPFW'  },
   { name:'Sophie W.',  teams:['Uruguay'],              slack:'@sophie.w'  },
   { name:'Tariq N.',   teams:['Croatia'],              slack:'@tariq.n'   },
   { name:'Yuki S.',    teams:['Switzerland'],          slack:'@yuki.s'    },
