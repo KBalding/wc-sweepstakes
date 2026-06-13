@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ometis WC26 Sweepstakes</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon.svg">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
@@ -83,18 +85,12 @@
     display: flex; align-items: center; gap: 16px;
   }
   .ometis-wordmark {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center;
   }
-  /* SVG-drawn Ometis "O" icon in orange */
-  .ometis-icon {
-    width: 32px; height: 32px; flex-shrink: 0;
+  /* Official Ometis white wordmark */
+  .ometis-logo {
+    height: 26px; width: auto; display: block; flex-shrink: 0;
   }
-  .wordmark-text {
-    font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
-    color: #FFFFFF;
-    line-height: 1;
-  }
-  .wordmark-text span { color: rgba(255,255,255,0.55); }
   .header-divider {
     width: 1px; height: 24px; background: rgba(255,255,255,0.25);
   }
@@ -670,14 +666,11 @@
 <!-- HEADER -->
 <header>
   <div class="logo-area">
-    <div class="ometis-wordmark">
-      <!-- Ometis "O" crest — cream square on the green masthead -->
-      <svg class="ometis-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" fill="#F7F5F0"/>
-        <text x="5" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="22" fill="#f47923">O</text>
-      </svg>
-      <div class="wordmark-text">ometis <span>|</span></div>
-    </div>
+    <a class="ometis-wordmark" href="https://ometis.co.uk" target="_blank" rel="noopener">
+      <!-- Official Ometis wordmark (white), hosted locally in assets/ -->
+      <img class="ometis-logo" src="assets/ometis-logo.png" alt="Ometis">
+    </a>
+    <div class="header-divider"></div>
     <div class="app-title"><strong>WC26 Sweepstakes</strong></div>
   </div>
   <div class="header-right">

@@ -11,6 +11,9 @@ const path = require('path');
 
 const FIXTURES_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
 const SLACK_WEBHOOK = process.env.SLACK_WEBHOOK;
+// Optional link to the sweepstake site, shown in the footer. Set as a repo
+// variable (Settings → Secrets and variables → Actions → Variables → SITE_URL).
+const SITE_URL = (process.env.SITE_URL || '').trim();
 
 if (!SLACK_WEBHOOK) {
   console.error('Missing SLACK_WEBHOOK env var. Set it as a repo secret.');
@@ -205,9 +208,11 @@ function buildSlackMessage(fixtures) {
     });
   }
 
+  const footer = '☕ on the line. Or pride. Or both.' +
+    (SITE_URL ? `  ·  <${SITE_URL}|View the sweepstakes board →>` : '');
   blocks.push({
     type: 'context',
-    elements: [{ type: 'mrkdwn', text: '☕ on the line. Or pride. Or both.' }],
+    elements: [{ type: 'mrkdwn', text: footer }],
   });
 
   return {
