@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ometis WC26 Sweepstakes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+  :root {
+    /* Ometis brand */
+    --ometis-orange:   #E8651A;
+    --ometis-orange-h: #FF7A2F;
+    --ometis-orange-d: #C04F0E;
+    --ometis-dark:     #1A1A1A;
+    --ometis-dark2:    #222222;
+    --ometis-dark3:    #2A2A2A;
+    --ometis-border:   #333333;
+    --ometis-border2:  #3D3D3D;
+    --chalk:           #F0EFED;
+    --chalk-dim:       #999999;
+    --chalk-faint:     #666666;
+    --green:           #3DB87A;
+    --red:             #E05252;
+    --blue:            #4A90D9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--ometis-dark);
+    color: var(--chalk);
+    min-height: 100vh;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: #111111;
+    border-bottom: 1px solid var(--ometis-border);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-area {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .ometis-wordmark {
+    display: flex; align-items: center; gap: 10px;
+  }
+  /* SVG-drawn Ometis "O" icon in orange */
+  .ometis-icon {
+    width: 32px; height: 32px; flex-shrink: 0;
+  }
+  .wordmark-text {
+    font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
+    color: var(--chalk);
+    line-height: 1;
+  }
+  .wordmark-text span { color: var(--ometis-orange); }
+  .header-divider {
+    width: 1px; height: 24px; background: var(--ometis-border2);
+  }
+  .app-title {
+    font-size: 13px; font-weight: 500; color: var(--chalk-dim);
+    letter-spacing: 0.2px;
+  }
+  .app-title strong { color: var(--chalk); font-weight: 600; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .slack-chip {
+    background: rgba(74,21,75,0.6);
+    border: 1px solid rgba(74,21,75,0.8);
+    color: #d499d5;
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .live-chip {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(61,184,122,0.12);
+    border: 1px solid rgba(61,184,122,0.25);
+    color: var(--green);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .live-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+  /* ── NAV ── */
+  nav {
+    background: #111111;
+    border-bottom: 1px solid var(--ometis-border);
+    display: flex;
+    padding: 0 28px;
+    overflow-x: auto;
+    gap: 0;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--chalk-faint);
+    padding: 14px 18px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.18s;
+    white-space: nowrap;
+    letter-spacing: 0.1px;
+  }
+  nav button:hover { color: var(--chalk-dim); }
+  nav button.active { color: var(--ometis-orange); border-bottom-color: var(--ometis-orange); font-weight: 600; }
+
+  /* ── LAYOUT ── */
+  main { padding: 24px 28px; max-width: 1280px; margin: 0 auto; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── TYPE SCALE ── */
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--chalk-faint);
+    margin-bottom: 14px;
+  }
+  .eyebrow .accent { color: var(--ometis-orange); }
+  h2 {
+    font-size: 20px; font-weight: 700; color: var(--chalk);
+    margin-bottom: 18px; letter-spacing: -0.3px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    border-radius: 8px;
+  }
+  .card-pad { padding: 20px 22px; }
+
+  /* ── TODAY'S FIXTURES ── */
+  .fixtures-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .fixtures-date {
+    font-size: 13px; color: var(--chalk-dim); font-weight: 400;
+  }
+  .match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .match-tile {
+    background: var(--ometis-dark3);
+    border: 1px solid var(--ometis-border);
+    border-radius: 7px;
+    padding: 14px 16px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  .match-tile.has-owner { border-color: var(--ometis-orange-d); }
+  .match-tile.has-owner::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--ometis-orange);
+    border-radius: 7px 7px 0 0;
+  }
+  .match-time {
+    font-size: 10px; color: var(--chalk-faint);
+    font-weight: 500; margin-bottom: 10px; letter-spacing: 0.5px;
+  }
+  .match-teams-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; flex-wrap: wrap;
+  }
+  .mflag { font-size: 17px; }
+  .mvs { font-size: 10px; color: var(--chalk-faint); font-weight: 400; }
+  .group-pip {
+    position: absolute; top: 10px; right: 12px;
+    font-size: 10px; color: var(--chalk-faint);
+    font-weight: 600; letter-spacing: 0.5px;
+  }
+  .owner-tag {
+    margin-top: 8px; font-size: 11px; color: var(--ometis-orange);
+    font-weight: 500; display: flex; align-items: center; gap: 4px;
+  }
+  .owner-tag::before { content: '●'; font-size: 7px; }
+  /* Head-to-head clash on match tile */
+  .h2h-badge {
+    position: absolute; top: 8px; right: 12px;
+    display: flex; align-items: center; gap: 4px;
+    background: linear-gradient(135deg, var(--ometis-orange), var(--ometis-orange-d));
+    color: #fff; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.5px; padding: 3px 8px; border-radius: 11px;
+    text-transform: uppercase;
+  }
+  .match-tile.is-h2h { border-color: var(--ometis-orange); }
+  .match-tile.is-h2h::before {
+    height: 3px; background: linear-gradient(90deg, var(--ometis-orange), var(--ometis-orange-d));
+  }
+
+  /* H2H grid — every fixture is an H2H card */
+  .h2h-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 14px;
+  }
+  .h2h-team-odds {
+    font-size: 10px; color: var(--chalk-faint);
+    margin-top: 2px; font-weight: 500;
+  }
+  .h2h-side.right .h2h-team-odds { text-align: right; }
+  .h2h-card.self-clash {
+    background: linear-gradient(135deg, rgba(74,144,217,0.06), rgba(74,144,217,0.02));
+    border-color: rgba(74,144,217,0.3);
+  }
+  .h2h-card.self-clash::before { background: linear-gradient(90deg, #4A90D9, #2c5d99); }
+  .h2h-card.self-clash .vs-pill { background: #4A90D9; }
+  .h2h-card.self-clash .h2h-vs { color: #4A90D9; }
+  .h2h-card.self-clash .h2h-team { color: #4A90D9; }
+
+  /* H2H clash section (legacy, kept for any remaining usage) */
+  .h2h-section { margin-bottom: 28px; }
+  .h2h-card {
+    background: linear-gradient(135deg, rgba(232,101,26,0.08), rgba(232,101,26,0.02));
+    border: 1px solid rgba(232,101,26,0.3);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 10px;
+    position: relative; overflow: hidden;
+  }
+  .h2h-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--ometis-orange), var(--ometis-orange-d));
+  }
+  .h2h-meta {
+    font-size: 11px; color: var(--chalk-faint); font-weight: 500;
+    letter-spacing: 0.5px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .h2h-meta .vs-pill {
+    background: var(--ometis-orange); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 10px; letter-spacing: 0.5px;
+  }
+  .h2h-row {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 16px; align-items: center;
+  }
+  .h2h-side {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .h2h-side.right { text-align: right; align-items: flex-end; }
+  .h2h-person {
+    font-size: 14px; font-weight: 700; color: var(--chalk);
+  }
+  .h2h-slack {
+    font-size: 11px; color: var(--chalk-faint);
+  }
+  .h2h-team {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--ometis-orange);
+    margin-top: 2px;
+  }
+  .h2h-side.right .h2h-team { flex-direction: row-reverse; }
+  .h2h-team .tf { font-size: 18px; }
+  .h2h-vs {
+    font-size: 18px; font-weight: 800;
+    color: var(--ometis-orange); letter-spacing: -0.5px;
+  }
+  .h2h-odds {
+    margin-top: 14px; display: flex; gap: 8px; justify-content: center;
+    padding-top: 12px; border-top: 1px solid rgba(232,101,26,0.15);
+  }
+  .h2h-odds .odds-chip { font-size: 11px; }
+  @media(max-width:520px){
+    .h2h-row { grid-template-columns: 1fr; gap: 10px; text-align: center; }
+    .h2h-side.right { text-align: center; align-items: center; }
+    .h2h-side.right .h2h-team { flex-direction: row; }
+  }
+
+  /* Odds loading bar on match tile */
+  .match-odds-row {
+    margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .odds-chip {
+    font-size: 10px; font-weight: 600;
+    background: rgba(232,101,26,0.12);
+    border: 1px solid rgba(232,101,26,0.25);
+    color: var(--ometis-orange);
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .odds-chip.loading { background: var(--ometis-dark3); border-color: var(--ometis-border); color: var(--chalk-faint); animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+  /* ── PARTICIPANTS ── */
+  .sweep-controls { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+  .search-box {
+    flex: 1; min-width: 200px;
+    background: var(--ometis-dark3);
+    border: 1px solid var(--ometis-border);
+    color: var(--chalk);
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--ometis-orange); }
+  .search-box::placeholder { color: var(--chalk-faint); }
+
+  .participants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .p-card {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    border-radius: 7px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .p-card:hover { border-color: var(--ometis-border2); transform: translateY(-1px); background: var(--ometis-dark3); }
+  .p-card.playing { border-color: var(--ometis-orange-d); }
+  .p-name { font-size: 12px; color: var(--chalk-dim); font-weight: 500; margin-bottom: 5px; }
+  .p-slack { font-size: 11px; color: var(--chalk-faint); }
+  .p-team {
+    font-size: 19px; font-weight: 700; letter-spacing: -0.3px;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  }
+  .p-flag { font-size: 22px; }
+  .p-extra { font-size: 11px; color: var(--chalk-faint); margin-top: 4px; }
+  .p-playing-badge {
+    margin-top: 8px; font-size: 11px; color: var(--green); font-weight: 600;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .p-playing-badge::before { content:''; display:inline-block; width:6px; height:6px; background:var(--green); border-radius:50%; animation:pulse 1.5s infinite; }
+  .p-odds-badge {
+    margin-top: 8px; display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(232,101,26,0.1);
+    border: 1px solid rgba(232,101,26,0.2);
+    color: var(--ometis-orange);
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 12px;
+  }
+  .p-odds-label { color: var(--chalk-faint); font-weight: 400; font-size: 10px; }
+  .two-team-tag { font-size: 10px; color: var(--chalk-faint); margin-top: 4px; font-style: italic; }
+
+  /* ── JOURNEY ── */
+  .journey-picker {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px;
+  }
+  .journey-picker button {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    color: var(--chalk-dim);
+    padding: 7px 13px; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer;
+    transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+  }
+  .journey-picker button:hover { border-color: var(--ometis-border2); }
+  .journey-picker button.active { border-color: var(--ometis-orange); color: var(--ometis-orange); background: rgba(232,101,26,0.08); }
+
+  .journey-hero {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    border-radius: 8px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 20px;
+    position: relative; overflow: hidden;
+  }
+  .journey-hero::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--ometis-orange), var(--ometis-orange-d));
+  }
+  .j-flag { font-size: 50px; line-height: 1; }
+  .j-team-name { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .j-meta { font-size: 12px; color: var(--chalk-faint); margin-top: 4px; }
+  .j-owner { font-size: 12px; color: var(--ometis-orange); margin-top: 4px; font-weight: 500; }
+  .j-odds-block { margin-left: auto; text-align: right; }
+  .j-odds-val { font-size: 26px; font-weight: 800; color: var(--ometis-orange); letter-spacing: -0.5px; }
+  .j-odds-sub { font-size: 11px; color: var(--chalk-faint); margin-top: 2px; }
+
+  .stage-list { display: flex; flex-direction: column; gap: 8px; }
+  .stage-row {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color 0.15s;
+  }
+  .stage-row.current { border-color: var(--green); }
+  .stage-row.pending { opacity: 0.4; }
+  .stage-icon { font-size: 18px; width: 26px; text-align: center; flex-shrink: 0; }
+  .stage-info { flex: 1; }
+  .stage-name { font-weight: 600; font-size: 13px; }
+  .stage-detail { font-size: 12px; color: var(--chalk-faint); margin-top: 2px; }
+  .stage-result { font-size: 15px; font-weight: 700; }
+  .stage-result.win { color: var(--green); }
+  .stage-result.loss { color: var(--red); }
+  .stage-result.tbd { color: var(--chalk-faint); font-size: 12px; font-weight: 400; }
+
+  /* ── ODDS TABLE ── */
+  .odds-filters { display: flex; gap: 7px; margin-bottom: 14px; flex-wrap: wrap; }
+  .odds-filters button {
+    background: var(--ometis-dark2); border: 1px solid var(--ometis-border);
+    color: var(--chalk-faint); padding: 5px 13px; border-radius: 20px;
+    font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .odds-filters button.active, .odds-filters button:hover {
+    border-color: var(--ometis-orange); color: var(--ometis-orange);
+    background: rgba(232,101,26,0.08);
+  }
+
+  .odds-loading-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 18px 22px; color: var(--chalk-faint); font-size: 13px;
+  }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--ometis-border);
+    border-top-color: var(--ometis-orange);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .odds-table { background: var(--ometis-dark2); border: 1px solid var(--ometis-border); border-radius: 8px; overflow: hidden; }
+  .odds-head {
+    display: grid; grid-template-columns: 40px 1fr 100px 100px 80px 100px;
+    padding: 10px 20px;
+    background: #1E1E1E;
+    font-size: 10px; font-weight: 600; letter-spacing: 1px;
+    color: var(--chalk-faint); text-transform: uppercase;
+    border-bottom: 1px solid var(--ometis-border);
+  }
+  .odds-row {
+    display: grid; grid-template-columns: 40px 1fr 100px 100px 80px 100px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--ometis-border);
+    align-items: center;
+    transition: background 0.12s;
+  }
+  .odds-row:last-child { border-bottom: none; }
+  .odds-row:hover { background: var(--ometis-dark3); }
+  .rank { font-size: 12px; color: var(--chalk-faint); font-weight: 500; }
+  .rank.top3 { color: var(--ometis-orange); font-weight: 700; }
+  .team-col { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 13px; }
+  .team-col .tflag { font-size: 18px; }
+  .conf-tag {
+    font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 3px;
+    letter-spacing: 0.3px;
+  }
+  .UEFA     { background:#0f2a5e; color:#6fa0f0; }
+  .CONMEBOL { background:#3a0f0f; color:#f07070; }
+  .CONCACAF { background:#0f2e18; color:#60c87a; }
+  .AFC      { background:#2e220f; color:#d4a843; }
+  .CAF      { background:#220f2e; color:#b07ada; }
+  .OFC      { background:#1a2e0f; color:#90d060; }
+  .odds-val { font-size: 13px; font-weight: 700; color: var(--ometis-orange); }
+  .odds-us  { font-size: 12px; color: var(--chalk-faint); }
+  .win-pct  { font-size: 12px; color: var(--chalk-dim); }
+  .bar-cell {}
+  .bar { height: 4px; background: var(--ometis-border); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--ometis-orange); border-radius: 2px; transition: width 0.5s ease; }
+
+  /* ── MATCH ODDS SECTION ── */
+  .match-odds-section { margin-top: 28px; }
+  .match-odds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+  }
+  .match-odds-card {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    border-radius: 7px;
+    padding: 16px 18px;
+  }
+  .moc-header { font-size: 11px; color: var(--chalk-faint); margin-bottom: 10px; font-weight: 500; }
+  .moc-teams { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .moc-odds-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .moc-col { background: var(--ometis-dark3); border: 1px solid var(--ometis-border); border-radius: 5px; padding: 8px; text-align: center; }
+  .moc-label { font-size: 10px; color: var(--chalk-faint); margin-bottom: 4px; font-weight: 500; }
+  .moc-price { font-size: 16px; font-weight: 700; color: var(--chalk); }
+  .moc-col.fav .moc-price { color: var(--ometis-orange); }
+  .moc-col.loading .moc-price { color: var(--chalk-faint); animation: shimmer 1.4s infinite; }
+
+  /* ── SLACK ── */
+  .slack-card { background: var(--ometis-dark2); border: 1px solid var(--ometis-border); border-radius: 8px; padding: 24px 26px; margin-bottom: 16px; }
+  .slack-card h3 { font-size: 16px; font-weight: 700; color: var(--chalk); margin-bottom: 8px; }
+  .slack-card p { font-size: 13px; color: var(--chalk-faint); line-height: 1.7; margin-bottom: 14px; }
+  .notif-preview { background: #0f0a14; border-left: 3px solid #4A154B; border-radius: 4px; padding: 14px 16px; margin: 14px 0; }
+  .notif-app { font-size: 12px; font-weight: 700; color: #b388ff; margin-bottom: 5px; }
+  .notif-body { font-size: 13px; line-height: 1.7; color: var(--chalk-dim); }
+  .notif-body .hi { color: var(--ometis-orange); font-weight: 600; }
+  .notif-body .grn { color: var(--green); }
+  .code-block {
+    background: #111; border: 1px solid var(--ometis-border2);
+    border-radius: 6px; padding: 16px 18px;
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: var(--chalk); overflow-x: auto; line-height: 1.8;
+    margin-bottom: 12px;
+  }
+  .code-block .c { color: #558c55; }
+  .code-block .k { color: #79b8ff; }
+  .code-block .s { color: #b5e853; }
+  .code-block .v { color: var(--ometis-orange); }
+  .webhook-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .webhook-input {
+    flex: 1; min-width: 240px;
+    background: #111;
+    border: 1px solid var(--ometis-border);
+    color: var(--chalk);
+    padding: 9px 14px; border-radius: 6px;
+    font-family: 'Courier New', monospace; font-size: 12px;
+    outline: none; transition: border-color 0.15s;
+  }
+  .webhook-input:focus { border-color: var(--ometis-orange); }
+  .btn-primary {
+    background: var(--ometis-orange); color: #fff;
+    border: none; padding: 9px 20px; border-radius: 6px;
+    font-weight: 600; font-size: 13px; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--ometis-orange-h); }
+  .btn-ghost {
+    background: transparent; color: var(--chalk-dim);
+    border: 1px solid var(--ometis-border); padding: 9px 18px; border-radius: 6px;
+    font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
+  }
+  .btn-ghost:hover { border-color: var(--ometis-orange); color: var(--ometis-orange); }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 200;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--ometis-dark2);
+    border: 1px solid var(--ometis-border);
+    border-radius: 10px; padding: 26px;
+    max-width: 480px; width: 100%; position: relative;
+  }
+  .modal::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--ometis-orange); border-radius: 10px 10px 0 0;
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; color: var(--chalk-faint);
+    font-size: 18px; cursor: pointer; line-height: 1; padding: 4px;
+  }
+  .modal-close:hover { color: var(--chalk); }
+  .modal h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: var(--chalk); margin-bottom: 3px; }
+  .modal-sub { font-size: 12px; color: var(--chalk-faint); margin-bottom: 18px; }
+  .modal-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .modal-stat { background: var(--ometis-dark3); border: 1px solid var(--ometis-border); border-radius: 6px; padding: 12px 14px; }
+  .modal-stat-label { font-size: 10px; color: var(--chalk-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .modal-stat-val { font-size: 20px; font-weight: 800; color: var(--chalk); letter-spacing: -0.3px; }
+  .modal-stat-val.accent { color: var(--ometis-orange); }
+  .modal-team-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--ometis-border); }
+  .modal-team-row:last-child { border-bottom: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 48px; padding: 20px 28px;
+    border-top: 1px solid var(--ometis-border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .footer-brand { font-size: 12px; color: var(--chalk-faint); }
+  .footer-brand span { color: var(--ometis-orange); font-weight: 600; }
+  .footer-note { font-size: 11px; color: #444; }
+
+  .empty { text-align: center; padding: 48px; color: var(--chalk-faint); font-size: 13px; }
+  .empty .ei { font-size: 36px; margin-bottom: 10px; }
+
+  @media(max-width:640px){
+    main { padding: 16px; }
+    header { padding: 0 16px; }
+    nav { padding: 0 16px; }
+    .odds-head, .odds-row { grid-template-columns: 32px 1fr 80px 70px; }
+    .odds-head > *:nth-child(5), .odds-row > *:nth-child(5),
+    .odds-head > *:nth-child(6), .odds-row > *:nth-child(6) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <div class="ometis-wordmark">
+      <!-- Ometis-style icon: bold O with orange accent -->
+      <svg class="ometis-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="6" fill="#E8651A"/>
+        <text x="5" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="22" fill="white">O</text>
+      </svg>
+      <div class="wordmark-text">ometis <span>|</span></div>
+    </div>
+    <div class="app-title"><strong>WC26 Sweepstakes</strong></div>
+  </div>
+  <div class="header-right">
+    <div class="slack-chip"># sweepstakes-wc26</div>
+    <div class="live-chip"><span class="live-dot"></span>Live</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <button class="active" onclick="showView('today',this)">Today's Fixtures</button>
+  <button onclick="showView('sweep',this)">Sweepstakes</button>
+  <button onclick="showView('journey',this)">Team Journey</button>
+  <button onclick="showView('odds',this)">Tournament Odds</button>
+  <button onclick="showView('slack',this)">⚡ Slack Setup</button>
+</nav>
+
+<main>
+
+  <!-- TODAY -->
+  <div class="view active" id="view-today">
+    <div class="eyebrow" id="today-eyebrow">Loading…</div>
+    <div class="fixtures-header">
+      <h2>Today's Head-to-Head <span style="font-size:13px;font-weight:400;color:var(--chalk-faint)" id="odds-source-label"></span></h2>
+      <div class="fixtures-date" id="fixtures-date"></div>
+    </div>
+    <div id="today-h2h-grid"></div>
+  </div>
+
+  <!-- SWEEPSTAKES -->
+  <div class="view" id="view-sweep">
+    <div class="eyebrow">All Participants · <span class="accent" id="sweep-count"></span></div>
+    <h2>Sweepstakes Draw</h2>
+    <div class="sweep-controls">
+      <input class="search-box" id="search-input" placeholder="Search by name or team…" oninput="filterParticipants()">
+    </div>
+    <div class="participants-grid" id="all-participants"></div>
+  </div>
+
+  <!-- JOURNEY -->
+  <div class="view" id="view-journey">
+    <div class="eyebrow">Team Journey · <span class="accent">Tournament Path Tracker</span></div>
+    <h2>Select a Team</h2>
+    <div class="journey-picker" id="journey-picker"></div>
+    <div id="journey-content">
+      <div class="empty"><div class="ei">⚽</div>Pick a team above to see their path through the tournament.</div>
+    </div>
+  </div>
+
+  <!-- ODDS -->
+  <div class="view" id="view-odds">
+    <div class="eyebrow">Outright Winner Odds · <span class="accent">All 48 Teams</span></div>
+    <h2>Tournament Odds</h2>
+    <div class="odds-filters">
+      <button class="active" onclick="filterOdds('all',this)">All Teams</button>
+      <button onclick="filterOdds('UEFA',this)">Europe</button>
+      <button onclick="filterOdds('CONMEBOL',this)">S. America</button>
+      <button onclick="filterOdds('CONCACAF',this)">N/C America</button>
+      <button onclick="filterOdds('AFC',this)">Asia</button>
+      <button onclick="filterOdds('CAF',this)">Africa</button>
+    </div>
+    <div class="odds-table">
+      <div class="odds-head">
+        <div>#</div><div>Team</div><div>UK Odds</div><div>US Odds</div><div>Win %</div><div>Implied</div>
+      </div>
+      <div id="odds-rows"></div>
+    </div>
+  </div>
+
+  <!-- SLACK -->
+  <div class="view" id="view-slack">
+    <div class="eyebrow">Slack Integration · <span class="accent">Match Day Alerts</span></div>
+    <h2>Slack Setup</h2>
+
+    <div class="slack-card">
+      <h3>Daily Match Alerts</h3>
+      <p>Each match day, the bot posts to your channel. Since every team is owned, <strong>every fixture is a head-to-head between two colleagues</strong>. The message tags both, shows team odds, and lays down the bragging-rights challenge. Fixtures are pulled live from <a href="https://github.com/openfootball/worldcup.json" target="_blank" style="color:var(--ometis-orange)">openfootball</a> — no manual updates needed for the whole tournament.</p>
+      <div class="notif-preview">
+        <div class="notif-app">⚽ WC26 Sweepstakes</div>
+        <div class="notif-body">
+          <strong>⚔ Today's head-to-heads</strong><br><br>
+          <span class="grn">🟢 Group L  ·  21:00 BST  ·  Dallas</span><br>
+          <span class="hi">@sarah.m</span> 🏴󠁧󠁢󠁥󠁮󠁧󠁿 <strong>England</strong>  ⚔  <strong>Croatia</strong> 🇭🇷 <span class="hi">@tariq.n</span><br>
+          Outright: <span class="hi">Eng 7/1 · Cro 50/1</span><br><br>
+          <span class="grn">🟢 Group I  ·  23:00 BST  ·  Atlanta</span><br>
+          <span class="hi">@james.k</span> 🇫🇷 <strong>France</strong>  ⚔  <strong>Senegal</strong> 🇸🇳 <span class="hi">@leo.x</span><br>
+          Outright: <span class="hi">Fra 5/1 · Sen 80/1</span><br><br>
+          <span style="color:#888">☕ on the line. Or pride. Or both.</span>
+        </div>
+      </div>
+      <div class="webhook-row">
+        <input class="webhook-input" id="webhook-url" placeholder="https://hooks.slack.com/services/T.../B.../...">
+        <button class="btn-primary" onclick="saveWebhook()">Save webhook</button>
+        <button class="btn-ghost" onclick="testWebhook()">Test ping</button>
+      </div>
+      <p style="font-size:11px;color:#555;margin-top:8px;margin-bottom:0">Create at: Slack → Your Apps → Incoming Webhooks → Add to workspace</p>
+    </div>
+
+    <div class="slack-card">
+      <h3>How to automate it</h3>
+      <p>This is a static HTML file, so Slack pings need a small external cron. Simplest free option: a GitHub Actions workflow that runs at 9am daily. Paste your webhook URL and participant list into the environment.</p>
+      <div class="code-block">
+<span class="c"># .github/workflows/daily-alert.yml</span>
+<span class="k">name:</span> <span class="s">Daily WC26 Slack alert</span>
+<span class="k">on:</span>
+  <span class="k">schedule:</span>
+    - <span class="k">cron:</span> <span class="s">'0 8 * 6,7 *'</span>  <span class="c"># 08:00 UTC = 09:00 BST daily in Jun/Jul</span>
+  <span class="k">workflow_dispatch:</span>
+
+<span class="k">jobs:</span>
+  <span class="k">alert:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">steps:</span>
+      - <span class="k">uses:</span> <span class="s">actions/checkout@v4</span>
+      - <span class="k">uses:</span> <span class="s">actions/setup-node@v4</span>
+        <span class="k">with:</span> { <span class="k">node-version:</span> <span class="s">'20'</span> }
+      - <span class="k">run:</span> <span class="s">node scripts/notify.js</span>
+        <span class="k">env:</span>
+          <span class="k">SLACK_WEBHOOK:</span> <span class="v">${{ secrets.SLACK_WEBHOOK }}</span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-ghost" onclick="alert('Ask Claude to generate scripts/wc26-notify.js for your full participant list')">📋 Generate Node.js script</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">Powered by <span>ometis</span> · WC26 Sweepstakes</div>
+  <div class="footer-note">Odds: bookmaker market estimates · For entertainment only · Please gamble responsibly</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+const TEAMS = {
+  // Group A
+  "Mexico":              {flag:"🇲🇽",group:"A",conf:"CONCACAF", odds_frac:"66/1", odds_us:"+6600", win_pct:1.5},
+  "South Africa":        {flag:"🇿🇦",group:"A",conf:"CAF",      odds_frac:"250/1",odds_us:"+25000",win_pct:0.4},
+  "South Korea":         {flag:"🇰🇷",group:"A",conf:"AFC",      odds_frac:"150/1",odds_us:"+15000",win_pct:0.7},
+  "Czech Republic":      {flag:"🇨🇿",group:"A",conf:"UEFA",     odds_frac:"200/1",odds_us:"+20000",win_pct:0.5},
+  // Group B
+  "Canada":              {flag:"🇨🇦",group:"B",conf:"CONCACAF", odds_frac:"125/1",odds_us:"+12500",win_pct:0.8},
+  "Bosnia & Herzegovina":{flag:"🇧🇦",group:"B",conf:"UEFA",     odds_frac:"500/1",odds_us:"+50000",win_pct:0.2},
+  "Qatar":               {flag:"🇶🇦",group:"B",conf:"AFC",      odds_frac:"200/1",odds_us:"+20000",win_pct:0.5},
+  "Switzerland":         {flag:"🇨🇭",group:"B",conf:"UEFA",     odds_frac:"66/1", odds_us:"+6600", win_pct:1.5},
+  // Group C
+  "Brazil":              {flag:"🇧🇷",group:"C",conf:"CONMEBOL", odds_frac:"8/1",  odds_us:"+800",  win_pct:11.1},
+  "Morocco":             {flag:"🇲🇦",group:"C",conf:"CAF",      odds_frac:"33/1", odds_us:"+3300", win_pct:2.9},
+  "Haiti":               {flag:"🇭🇹",group:"C",conf:"CONCACAF", odds_frac:"1000/1",odds_us:"+100000",win_pct:0.1},
+  "Scotland":            {flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",group:"C",conf:"UEFA",     odds_frac:"100/1",odds_us:"+10000",win_pct:1.0},
+  // Group D
+  "USA":                 {flag:"🇺🇸",group:"D",conf:"CONCACAF", odds_frac:"50/1", odds_us:"+5000", win_pct:2.0},
+  "Paraguay":            {flag:"🇵🇾",group:"D",conf:"CONMEBOL", odds_frac:"300/1",odds_us:"+30000",win_pct:0.3},
+  "Australia":           {flag:"🇦🇺",group:"D",conf:"AFC",      odds_frac:"150/1",odds_us:"+15000",win_pct:0.7},
+  "Turkey":              {flag:"🇹🇷",group:"D",conf:"UEFA",     odds_frac:"100/1",odds_us:"+10000",win_pct:1.0},
+  // Group E
+  "Germany":             {flag:"🇩🇪",group:"E",conf:"UEFA",     odds_frac:"14/1", odds_us:"+1400", win_pct:6.7},
+  "Curaçao":             {flag:"🇨🇼",group:"E",conf:"CONCACAF", odds_frac:"1000/1",odds_us:"+100000",win_pct:0.1},
+  "Ivory Coast":         {flag:"🇨🇮",group:"E",conf:"CAF",      odds_frac:"200/1",odds_us:"+20000",win_pct:0.5},
+  "Ecuador":             {flag:"🇪🇨",group:"E",conf:"CONMEBOL", odds_frac:"80/1", odds_us:"+8000", win_pct:1.2},
+  // Group F
+  "Netherlands":         {flag:"🇳🇱",group:"F",conf:"UEFA",     odds_frac:"20/1", odds_us:"+2000", win_pct:4.8},
+  "Japan":               {flag:"🇯🇵",group:"F",conf:"AFC",      odds_frac:"33/1", odds_us:"+3300", win_pct:2.9},
+  "Sweden":              {flag:"🇸🇪",group:"F",conf:"UEFA",     odds_frac:"66/1", odds_us:"+6600", win_pct:1.5},
+  "Tunisia":             {flag:"🇹🇳",group:"F",conf:"CAF",      odds_frac:"300/1",odds_us:"+30000",win_pct:0.3},
+  // Group G
+  "Belgium":             {flag:"🇧🇪",group:"G",conf:"UEFA",     odds_frac:"25/1", odds_us:"+2500", win_pct:3.8},
+  "Egypt":               {flag:"🇪🇬",group:"G",conf:"CAF",      odds_frac:"200/1",odds_us:"+20000",win_pct:0.5},
+  "Iran":                {flag:"🇮🇷",group:"G",conf:"AFC",      odds_frac:"150/1",odds_us:"+15000",win_pct:0.7},
+  "New Zealand":         {flag:"🇳🇿",group:"G",conf:"OFC",      odds_frac:"1000/1",odds_us:"+100000",win_pct:0.1},
+  // Group H
+  "Spain":               {flag:"🇪🇸",group:"H",conf:"UEFA",     odds_frac:"9/2",  odds_us:"+450",  win_pct:18.2},
+  "Cape Verde":          {flag:"🇨🇻",group:"H",conf:"CAF",      odds_frac:"1000/1",odds_us:"+100000",win_pct:0.1},
+  "Saudi Arabia":        {flag:"🇸🇦",group:"H",conf:"AFC",      odds_frac:"250/1",odds_us:"+25000",win_pct:0.4},
+  "Uruguay":             {flag:"🇺🇾",group:"H",conf:"CONMEBOL", odds_frac:"50/1", odds_us:"+5000", win_pct:2.0},
+  // Group I
+  "France":              {flag:"🇫🇷",group:"I",conf:"UEFA",     odds_frac:"5/1",  odds_us:"+500",  win_pct:16.7},
+  "Senegal":             {flag:"🇸🇳",group:"I",conf:"CAF",      odds_frac:"80/1", odds_us:"+8000", win_pct:1.2},
+  "Iraq":                {flag:"🇮🇶",group:"I",conf:"AFC",      odds_frac:"500/1",odds_us:"+50000",win_pct:0.2},
+  "Norway":              {flag:"🇳🇴",group:"I",conf:"UEFA",     odds_frac:"50/1", odds_us:"+5000", win_pct:2.0},
+  // Group J
+  "Argentina":           {flag:"🇦🇷",group:"J",conf:"CONMEBOL", odds_frac:"9/1",  odds_us:"+900",  win_pct:10.0},
+  "Algeria":             {flag:"🇩🇿",group:"J",conf:"CAF",      odds_frac:"300/1",odds_us:"+30000",win_pct:0.3},
+  "Austria":             {flag:"🇦🇹",group:"J",conf:"UEFA",     odds_frac:"100/1",odds_us:"+10000",win_pct:1.0},
+  "Jordan":              {flag:"🇯🇴",group:"J",conf:"AFC",      odds_frac:"1000/1",odds_us:"+100000",win_pct:0.1},
+  // Group K
+  "Portugal":            {flag:"🇵🇹",group:"K",conf:"UEFA",     odds_frac:"9/1",  odds_us:"+900",  win_pct:10.0},
+  "DR Congo":            {flag:"🇨🇩",group:"K",conf:"CAF",      odds_frac:"300/1",odds_us:"+30000",win_pct:0.3},
+  "Uzbekistan":          {flag:"🇺🇿",group:"K",conf:"AFC",      odds_frac:"500/1",odds_us:"+50000",win_pct:0.2},
+  "Colombia":            {flag:"🇨🇴",group:"K",conf:"CONMEBOL", odds_frac:"33/1", odds_us:"+3300", win_pct:2.9},
+  // Group L
+  "England":             {flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",group:"L",conf:"UEFA",     odds_frac:"7/1",  odds_us:"+700",  win_pct:12.5},
+  "Croatia":             {flag:"🇭🇷",group:"L",conf:"UEFA",     odds_frac:"50/1", odds_us:"+5000", win_pct:2.0},
+  "Ghana":               {flag:"🇬🇭",group:"L",conf:"CAF",      odds_frac:"250/1",odds_us:"+25000",win_pct:0.4},
+  "Panama":              {flag:"🇵🇦",group:"L",conf:"CONCACAF", odds_frac:"500/1",odds_us:"+50000",win_pct:0.2},
+};
+
+// ── REPLACE THIS ARRAY WITH YOUR REAL DRAW RESULTS ──
+const PARTICIPANTS = [
+  // 38 single-team entries
+  { name:"Sarah M.",   teams:["England"],              slack:"@sarah.m"   },
+  { name:"James K.",   teams:["France"],               slack:"@james.k"   },
+  { name:"Priya R.",   teams:["Brazil"],               slack:"@priya.r"   },
+  { name:"Tom W.",     teams:["Spain"],                slack:"@tom.w"     },
+  { name:"Aisling O.", teams:["Argentina"],            slack:"@aisling.o" },
+  { name:"Ben F.",     teams:["Portugal"],             slack:"@ben.f"     },
+  { name:"Mei L.",     teams:["Germany"],              slack:"@mei.l"     },
+  { name:"Raj P.",     teams:["Netherlands"],          slack:"@raj.p"     },
+  { name:"Connor B.",  teams:["Belgium"],              slack:"@connor.b"  },
+  { name:"Fatima A.",  teams:["Morocco"],              slack:"@fatima.a"  },
+  { name:"Jake T.",    teams:["Colombia"],             slack:"@jake.t"    },
+  { name:"Lucy D.",    teams:["Japan"],                slack:"@lucy.d"    },
+  { name:"Marcus E.",  teams:["USA"],                  slack:"@marcus.e"  },
+  { name:"Sophie W.",  teams:["Uruguay"],              slack:"@sophie.w"  },
+  { name:"Tariq N.",   teams:["Croatia"],              slack:"@tariq.n"   },
+  { name:"Yuki S.",    teams:["Switzerland"],          slack:"@yuki.s"    },
+  { name:"Alex B.",    teams:["Mexico"],               slack:"@alex.b"    },
+  { name:"Dana H.",    teams:["Sweden"],               slack:"@dana.h"    },
+  { name:"Ellie M.",   teams:["Australia"],            slack:"@ellie.m"   },
+  { name:"Frank O.",   teams:["Ecuador"],              slack:"@frank.o"   },
+  { name:"Grace P.",   teams:["South Korea"],          slack:"@grace.p"   },
+  { name:"Harry S.",   teams:["Norway"],               slack:"@harry.s"   },
+  { name:"Isla T.",    teams:["Turkey"],               slack:"@isla.t"    },
+  { name:"Jordan V.",  teams:["Scotland"],             slack:"@jordan.v"  },
+  { name:"Karen W.",   teams:["Canada"],               slack:"@karen.w"   },
+  { name:"Leo X.",     teams:["Senegal"],              slack:"@leo.x"     },
+  { name:"Mia Y.",     teams:["South Africa"],         slack:"@mia.y"     },
+  { name:"Noel Z.",    teams:["Egypt"],                slack:"@noel.z"    },
+  { name:"Orla A.",    teams:["Iran"],                 slack:"@orla.a"    },
+  { name:"Pete B.",    teams:["Saudi Arabia"],         slack:"@pete.b"    },
+  { name:"Quinn C.",   teams:["Ghana"],                slack:"@quinn.c"   },
+  { name:"Rosa D.",    teams:["Austria"],              slack:"@rosa.d"    },
+  { name:"Sam E.",     teams:["Iraq"],                 slack:"@sam.e"     },
+  { name:"Tina F.",    teams:["Paraguay"],             slack:"@tina.f"    },
+  { name:"Umar G.",    teams:["Curaçao"],              slack:"@umar.g"    },
+  { name:"Vera H.",    teams:["Ivory Coast"],          slack:"@vera.h"    },
+  { name:"Will I.",    teams:["Tunisia"],              slack:"@will.i"    },
+  { name:"Xara J.",    teams:["Algeria"],              slack:"@xara.j"    },
+  // 5 people with 2 teams (38 + 10 = 48 total)
+  { name:"Yasmin K.",  teams:["Uzbekistan","Bosnia & Herzegovina"], slack:"@yasmin.k"  },
+  { name:"Zach L.",    teams:["Panama","Haiti"],                    slack:"@zach.l"    },
+  { name:"Amy N.",     teams:["Czech Republic","Qatar"],            slack:"@amy.n"     },
+  { name:"Brian Q.",   teams:["New Zealand","DR Congo"],            slack:"@brian.q"   },
+  { name:"Chloe R.",   teams:["Cape Verde","Jordan"],               slack:"@chloe.r"   },
+];
+
+// Fixtures are fetched live from openfootball — see fetchFixtures() below
+const FIXTURES_URL = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
+let ALL_FIXTURES = [];     // Full tournament, populated on load
+let TODAY_MATCHES = [];    // Filtered to today (BST)
+
+// Convert openfootball time (e.g. "13:00 UTC-6") on a given date to BST
+function toBST(time, date) {
+  const m = time.match(/(\d{1,2}):(\d{2})\s+UTC([+-]\d+)/);
+  if (!m) return { timeStr: time, dateStr: date };
+  const localH = parseInt(m[1]);
+  const localM = parseInt(m[2]);
+  const offset = parseInt(m[3]);  // e.g. -6 for UTC-6
+  // Build a Date in UTC by inverting the offset
+  const d = new Date(`${date}T${String(localH).padStart(2,'0')}:${String(localM).padStart(2,'0')}:00Z`);
+  d.setUTCHours(d.getUTCHours() - offset);
+  const timeStr = d.toLocaleString('en-GB', {timeZone:'Europe/London', hour:'2-digit', minute:'2-digit', hour12:false});
+  const dateStr = d.toLocaleDateString('en-CA', {timeZone:'Europe/London'}); // YYYY-MM-DD
+  return { timeStr, dateStr };
+}
+
+function getTodayBSTDate() {
+  return new Date().toLocaleDateString('en-CA', {timeZone:'Europe/London'});
+}
+
+// Normalize an openfootball fixture into our internal shape
+function normalizeFixture(raw) {
+  const bst = toBST(raw.time || '', raw.date || '');
+  return {
+    teamA: raw.team1,
+    teamB: raw.team2,
+    group: (raw.group || '').replace(/^Group\s+/i, ''),
+    round: raw.round || '',
+    ground: raw.ground || '',
+    time: bst.timeStr,
+    bstDate: bst.dateStr,
+    rawDate: raw.date,
+  };
+}
+
+async function fetchFixtures() {
+  try {
+    const resp = await fetch(FIXTURES_URL);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    const fixtures = (data.matches || []).map(normalizeFixture);
+    // Filter out placeholder rows (knockouts before draw is set, e.g. "W101 v L102")
+    ALL_FIXTURES = fixtures.filter(f => TEAMS[f.teamA] && TEAMS[f.teamB]);
+    return ALL_FIXTURES;
+  } catch(e) {
+    console.error('Fixture fetch failed:', e);
+    document.getElementById('today-h2h-grid').innerHTML =
+      `<div class="empty"><div class="ei">⚠</div>Could not load fixtures from openfootball.<br>Check the browser console for details.</div>`;
+    return [];
+  }
+}
+
+function getTodayFixtures() {
+  const today = getTodayBSTDate();
+  return ALL_FIXTURES.filter(f => f.bstDate === today);
+}
+
+const JOURNEYS = {
+  "England": [
+    {stage:"Group L — Game 1", match:"England 🏴󠁧󠁢󠁥󠁮󠁧󠁿 vs Croatia 🇭🇷", date:"17 Jun", result:null, status:"upcoming"},
+    {stage:"Group L — Game 2", match:"England 🏴󠁧󠁢󠁥󠁮󠁧󠁿 vs Ghana 🇬🇭",   date:"23 Jun", result:null, status:"upcoming"},
+    {stage:"Group L — Game 3", match:"Panama 🇵🇦 vs England 🏴󠁧󠁢󠁥󠁮󠁧󠁿",   date:"27 Jun", result:null, status:"upcoming"},
+    {stage:"Round of 32",      match:"TBD", date:"~2 Jul",  result:null, status:"pending"},
+    {stage:"Round of 16",      match:"TBD", date:"~7 Jul",  result:null, status:"pending"},
+    {stage:"Quarter-final",    match:"TBD", date:"~10 Jul", result:null, status:"pending"},
+    {stage:"Semi-final",       match:"TBD", date:"~14 Jul", result:null, status:"pending"},
+    {stage:"Final",            match:"TBD", date:"19 Jul",  result:null, status:"pending"},
+  ],
+  "Brazil": [
+    {stage:"Group C — Game 1", match:"Brazil 🇧🇷 vs Morocco 🇲🇦",   date:"12 Jun", result:null, status:"current"},
+    {stage:"Group C — Game 2", match:"Brazil 🇧🇷 vs Nigeria 🇳🇬",   date:"TBC",    result:null, status:"upcoming"},
+    {stage:"Group C — Game 3", match:"Venezuela 🇻🇪 vs Brazil 🇧🇷", date:"TBC",    result:null, status:"upcoming"},
+    {stage:"Round of 32",      match:"TBD", date:"~2 Jul",  result:null, status:"pending"},
+    {stage:"Round of 16",      match:"TBD", date:"~7 Jul",  result:null, status:"pending"},
+    {stage:"Quarter-final",    match:"TBD", date:"~10 Jul", result:null, status:"pending"},
+    {stage:"Semi-final",       match:"TBD", date:"~14 Jul", result:null, status:"pending"},
+    {stage:"Final",            match:"TBD", date:"19 Jul",  result:null, status:"pending"},
+  ],
+  "Spain": [
+    {stage:"Group H — Game 1", match:"Spain 🇪🇸 vs Algeria 🇩🇿", date:"TBC", result:null, status:"upcoming"},
+    {stage:"Group H — Game 2", match:"Spain 🇪🇸 vs Ukraine 🇺🇦", date:"TBC", result:null, status:"upcoming"},
+    {stage:"Group H — Game 3", match:"TBD vs Spain 🇪🇸",          date:"TBC", result:null, status:"upcoming"},
+    {stage:"Round of 32",      match:"TBD", date:"~2 Jul",  result:null, status:"pending"},
+    {stage:"Round of 16",      match:"TBD", date:"~7 Jul",  result:null, status:"pending"},
+    {stage:"Quarter-final",    match:"TBD", date:"~10 Jul", result:null, status:"pending"},
+    {stage:"Semi-final",       match:"TBD", date:"~14 Jul", result:null, status:"pending"},
+    {stage:"Final",            match:"TBD", date:"19 Jul",  result:null, status:"pending"},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════
+// STATIC ODDS — refresh by asking Claude for an updated file
+// ═══════════════════════════════════════════════════════
+let oddsCurrentFilter = 'all';
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+async function init() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('today-eyebrow').innerHTML = `Today · <span class="accent">${dateStr}</span>`;
+  document.getElementById('fixtures-date').textContent = dateStr;
+  document.getElementById('sweep-count').textContent = `${PARTICIPANTS.length} People`;
+  document.getElementById('odds-source-label').textContent = '· live data via openfootball';
+
+  // Render the non-fixture views right away
+  renderAllParticipants();
+  renderJourneyPicker();
+  renderTournamentOdds();
+
+  // Loading state for today's view
+  document.getElementById('today-h2h-grid').innerHTML =
+    `<div class="empty"><div class="ei">📡</div>Loading today's fixtures…</div>`;
+
+  // Fetch the live fixtures, then render today
+  await fetchFixtures();
+  TODAY_MATCHES = getTodayFixtures();
+  renderTodayMatches();
+}
+
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Helper: build a map of {teamName: participant} for teams playing today
+function getTodayOwnerMap() {
+  const todaySet = new Set(TODAY_MATCHES.flatMap(m => [m.teamA, m.teamB]));
+  const owners = {};
+  PARTICIPANTS.forEach(p => p.teams.forEach(t => {
+    if (todaySet.has(t)) owners[t] = p;
+  }));
+  return owners;
+}
+
+// Unified Today view — every fixture is a colleague-vs-colleague H2H card
+function renderTodayMatches() {
+  const ownerMap = getTodayOwnerMap();
+  const grid = document.getElementById('today-h2h-grid');
+
+  if (!TODAY_MATCHES.length) {
+    grid.innerHTML = `<div class="empty"><div class="ei">🛌</div>No fixtures today. Rest day in the tournament.</div>`;
+    return;
+  }
+
+  grid.innerHTML = `<div class="h2h-grid">` + TODAY_MATCHES.map(m => {
+    const pA = ownerMap[m.teamA], pB = ownerMap[m.teamB];
+    const tA = TEAMS[m.teamA], tB = TEAMS[m.teamB];
+    const selfClash = pA && pB && pA.name === pB.name;
+    const groupLabel = m.group ? `Group ${m.group}` : (m.round || 'Knockout');
+    return `<div class="h2h-card ${selfClash ? 'self-clash' : ''}">
+      <div class="h2h-meta">
+        <span class="vs-pill">${selfClash ? 'SELF' : 'VS'}</span>
+        ${groupLabel} · 🕐 ${m.time}${m.ground ? ` · 📍 ${m.ground}` : ''}
+      </div>
+      <div class="h2h-row">
+        <div class="h2h-side">
+          <div class="h2h-person">${pA ? pA.name : '<span style="color:var(--chalk-faint)">Unassigned</span>'}</div>
+          <div class="h2h-slack">${pA ? pA.slack : '—'}</div>
+          <div class="h2h-team"><span class="tf">${tA?.flag||'🏳️'}</span>${m.teamA}</div>
+          <div class="h2h-team-odds">${tA?.odds_frac||'—'} to win cup</div>
+        </div>
+        <div class="h2h-vs">⚔</div>
+        <div class="h2h-side right">
+          <div class="h2h-person">${pB ? pB.name : '<span style="color:var(--chalk-faint)">Unassigned</span>'}</div>
+          <div class="h2h-slack">${pB ? pB.slack : '—'}</div>
+          <div class="h2h-team"><span class="tf">${tB?.flag||'🏳️'}</span>${m.teamB}</div>
+          <div class="h2h-team-odds">${tB?.odds_frac||'—'} to win cup</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+// Renamed stubs — keep functions used elsewhere as no-ops
+function renderTodayParticipants() { /* merged into renderTodayMatches */ }
+function renderMatchOdds() { /* merged into renderTodayMatches */ }
+
+// ALL PARTICIPANTS
+
+function renderAllParticipants(filter='') {
+  const c = document.getElementById('all-participants');
+  const todaySet = new Set(TODAY_MATCHES.flatMap(m => [m.teamA, m.teamB]));
+  document.getElementById('sweep-count').textContent = `${PARTICIPANTS.length} People`;
+  const list = PARTICIPANTS.filter(p => {
+    if (!filter) return true;
+    const q = filter.toLowerCase();
+    return p.name.toLowerCase().includes(q) || p.teams.some(t => t.toLowerCase().includes(q));
+  });
+  c.innerHTML = list.map(p => {
+    const play = p.teams.some(t => todaySet.has(t));
+    const main = p.teams[0]; const td = TEAMS[main];
+    const extra = p.teams.slice(1);
+    return `<div class="p-card ${play ? 'playing' : ''}" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">
+      <div class="p-name">${p.name} <span class="p-slack">${p.slack}</span></div>
+      <div class="p-team"><span class="p-flag">${td?.flag||'🏳️'}</span>${main}</div>
+      ${extra.length ? `<div class="p-extra">${extra.map(t=>`${TEAMS[t]?.flag||''} ${t}`).join(' · ')}</div>` : ''}
+      ${p.teams.length === 2 ? `<div class="two-team-tag">2-team draw</div>` : ''}
+      ${play ? `<div class="p-playing-badge">Playing today</div>` : ''}
+      <div class="p-odds-badge">${td?.odds_frac||'N/A'} <span class="p-odds-label">to win</span></div>
+    </div>`;
+  }).join('');
+}
+function filterParticipants() { renderAllParticipants(document.getElementById('search-input').value); }
+
+// JOURNEY
+function renderJourneyPicker() {
+  const el = document.getElementById('journey-picker');
+  const names = [...new Set([...Object.keys(JOURNEYS), ...PARTICIPANTS.flatMap(p=>p.teams)])].slice(0,24);
+  el.innerHTML = names.map(n => {
+    const td = TEAMS[n];
+    return `<button onclick="showJourney('${n}',this)">${td?.flag||'🏳️'} ${n}</button>`;
+  }).join('');
+}
+
+function showJourney(name, btn) {
+  document.querySelectorAll('.journey-picker button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const td = TEAMS[name];
+  const journey = JOURNEYS[name];
+  const owner = PARTICIPANTS.find(p=>p.teams.includes(name));
+  const icons = {upcoming:'📅',current:'⚽',pending:'🔒',completed:'✅'};
+  const stagesHtml = journey
+    ? journey.map(s=>`<div class="stage-row ${s.status}">
+        <div class="stage-icon">${icons[s.status]||'📅'}</div>
+        <div class="stage-info">
+          <div class="stage-name">${s.stage}</div>
+          <div class="stage-detail">${s.match} · ${s.date}</div>
+        </div>
+        <div class="stage-result ${s.result?'win':s.status==='current'?'':'tbd'}">
+          ${s.result || (s.status==='current'?'Live now':s.status==='upcoming'?'Upcoming':'—')}
+        </div>
+      </div>`).join('')
+    : `<div class="empty"><div>Full schedule for ${name} loading…</div></div>`;
+
+  document.getElementById('journey-content').innerHTML = `
+    <div class="journey-hero">
+      <div class="j-flag">${td?.flag||'🏳️'}</div>
+      <div>
+        <div class="j-team-name">${name}</div>
+        <div class="j-meta">Group ${td?.group||'?'} · ${td?.conf||''}</div>
+        ${owner ? `<div class="j-owner">● ${owner.name}'s team</div>` : ''}
+      </div>
+      <div class="j-odds-block">
+        <div class="j-odds-val">${td?.odds_frac||'N/A'}</div>
+        <div class="j-odds-sub">to win the tournament</div>
+        <div class="j-odds-sub">${td?.win_pct||0}% implied probability</div>
+      </div>
+    </div>
+    <div class="stage-list">${stagesHtml}</div>`;
+}
+
+// TOURNAMENT ODDS
+function renderTournamentOdds() {
+  const rows = document.getElementById('odds-rows');
+  const list = Object.entries(TEAMS)
+    .filter(([_,d]) => oddsCurrentFilter==='all' || d.conf===oddsCurrentFilter)
+    .sort((a,b) => b[1].win_pct - a[1].win_pct);
+  const max = list[0]?.[1].win_pct || 1;
+  rows.innerHTML = list.map(([name,d],i)=>`
+    <div class="odds-row">
+      <div class="rank ${i<3?'top3':''}">${i+1}</div>
+      <div class="team-col"><span class="tflag">${d.flag}</span>${name}<span class="conf-tag ${d.conf}" style="margin-left:7px">${d.conf}</span></div>
+      <div class="odds-val">${d.odds_frac}</div>
+      <div class="odds-us">${d.odds_us}</div>
+      <div class="win-pct">${d.win_pct}%</div>
+      <div class="bar-cell"><div class="bar"><div class="bar-fill" style="width:${Math.round((d.win_pct/max)*100)}%"></div></div></div>
+    </div>`).join('');
+}
+function filterOdds(conf, btn) {
+  document.querySelectorAll('.odds-filters button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  oddsCurrentFilter = conf;
+  renderTournamentOdds();
+}
+
+// MODAL
+function openModal(name) {
+  const p = PARTICIPANTS.find(x=>x.name===name);
+  if (!p) return;
+  const todaySet = new Set(TODAY_MATCHES.flatMap(m=>[m.teamA,m.teamB]));
+  const best = p.teams.reduce((b,t)=>{const pct=TEAMS[t]?.win_pct||0;return pct>b.pct?{team:t,pct}:b;},{team:'',pct:0});
+  const teamsHtml = p.teams.map(t=>{
+    const td=TEAMS[t]; const play=todaySet.has(t);
+    return `<div class="modal-team-row">
+      <span style="font-size:22px">${td?.flag||'🏳️'}</span>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${t}</div>
+        <div style="font-size:11px;color:var(--chalk-faint)">Group ${td?.group||'?'} · ${td?.odds_frac||'N/A'} to win tournament</div>
+      </div>
+      ${play?`<span style="color:var(--green);font-size:11px;font-weight:600">PLAYING TODAY</span>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('modal-body').innerHTML = `
+    <h3>${p.name}</h3>
+    <div class="modal-sub">${p.slack} · ${p.teams.length} team${p.teams.length!==1?'s':''}</div>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="modal-stat-label">Best odds</div>
+        <div class="modal-stat-val accent">${TEAMS[best.team]?.odds_frac||'—'}</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-label">via ${best.team||'—'}</div>
+        <div class="modal-stat-val">${best.pct}%</div>
+      </div>
+    </div>
+    ${teamsHtml}
+    <button class="btn-primary" style="width:100%;margin-top:18px" onclick="document.getElementById('modal').classList.remove('open');showView('journey',document.querySelector('nav button:nth-child(3)'));showJourney('${p.teams[0]}',document.querySelector('.journey-picker button'))">
+      View ${p.teams[0]}'s Journey →
+    </button>`;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e) { if(e.target.id==='modal') document.getElementById('modal').classList.remove('open'); }
+
+// SLACK
+function saveWebhook() {
+  const url = document.getElementById('webhook-url').value.trim();
+  if (!url.startsWith('https://hooks.slack.com/')) { alert('Please enter a valid Slack webhook URL'); return; }
+  localStorage.setItem('wc26_webhook', url);
+  alert('✅ Saved! Wire this URL into your cron script and you\'re live.');
+}
+function testWebhook() {
+  const url = localStorage.getItem('wc26_webhook') || document.getElementById('webhook-url').value.trim();
+  if (!url) { alert('Save a webhook URL first'); return; }
+  alert(`Would POST to:\n${url}\n\nWire this up in your Node.js script to fire the actual ping.`);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+name: Daily WC26 Slack alert
+
+# Posts today's head-to-heads to Slack every morning during the tournament.
+# Tournament dates: 11 June – 19 July 2026
+on:
+  schedule:
+    # 08:00 UTC = 09:00 BST. Runs every day in June and July.
+    # GitHub Actions cron uses UTC. Cron syntax: minute hour day month weekday
+    - cron: '0 8 * 6,7 *'
+  workflow_dispatch:  # Allow manual triggering from the Actions tab
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Send Slack alert
+        run: node scripts/notify.js
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
