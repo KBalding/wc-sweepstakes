@@ -8,19 +8,25 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
   /*
-   * Masters-inspired theme: cream background, Masters green, classic serif
-   * headings, hairline rules, sharp corners. The Ometis* / chalk* variables are
-   * kept as names (used throughout) but remapped to the light palette, so the
-   * whole page reads light without touching every rule individually.
+   * Masters-inspired LAYOUT (cream bg, serif headings, hairline rules, sharp
+   * corners) with the Ometis brand palette: deep teal #005a72 for mastheads /
+   * header bars, Ometis orange #f47923 as the accent. Theme is token-driven —
+   * the named vars below cascade across the whole page.
    */
   :root {
-    --masters-green:   #076633;   /* primary accent */
-    --masters-green-h: #0A8042;   /* hover */
-    --masters-green-d: #054d26;   /* darker */
+    /* Ometis brand */
+    --ometis-teal:     #005a72;   /* masthead / header bars */
+    --ometis-teal-h:   #00718f;   /* hover */
+    --ometis-teal-d:   #00465a;   /* darker rule */
 
-    --ometis-orange:   var(--masters-green);    /* accent → green */
-    --ometis-orange-h: var(--masters-green-h);
-    --ometis-orange-d: var(--masters-green-d);
+    /* header bars reference these names (kept for compatibility) */
+    --masters-green:   var(--ometis-teal);
+    --masters-green-h: var(--ometis-teal-h);
+    --masters-green-d: var(--ometis-teal-d);
+
+    --ometis-orange:   #f47923;   /* primary accent */
+    --ometis-orange-h: #ff8c3d;   /* hover */
+    --ometis-orange-d: #d4631a;   /* darker */
 
     --ometis-dark:     #F7F5F0;   /* page background (cream) */
     --ometis-dark2:    #FFFFFF;   /* card / surface */
@@ -32,15 +38,15 @@
     --chalk-dim:       #5A5750;   /* secondary text */
     --chalk-faint:     #908C82;   /* tertiary / labels */
 
-    --green:           #076633;   /* win / live (Masters green) */
+    --green:           #2e9841;   /* win / live (Ometis green) */
     --red:             #B23A30;   /* loss (muted brick) */
     --blue:            #2C5D99;
 
     --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
 
-    /* translucent green tints (replace old orange rgba tints) */
-    --accent-tint:   rgba(7,102,51,0.08);
-    --accent-tint-2: rgba(7,102,51,0.16);
+    /* translucent orange tints (accent fills) */
+    --accent-tint:   rgba(244,121,35,0.10);
+    --accent-tint-2: rgba(244,121,35,0.22);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -609,7 +615,7 @@
       <!-- Ometis "O" crest — cream square on the green masthead -->
       <svg class="ometis-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="32" height="32" fill="#F7F5F0"/>
-        <text x="5" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="22" fill="#076633">O</text>
+        <text x="5" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="22" fill="#f47923">O</text>
       </svg>
       <div class="wordmark-text">ometis <span>|</span></div>
     </div>
