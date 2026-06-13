@@ -390,6 +390,16 @@
   }
   .p-odds-label { color: var(--chalk-faint); font-weight: 400; font-size: 10px; }
   .two-team-tag { font-size: 10px; color: var(--chalk-faint); margin-top: 4px; font-style: italic; }
+  /* Knocked-out / champion participant states */
+  .p-card.eliminated { opacity: 0.5; }
+  .p-card.eliminated .p-team { text-decoration: line-through; text-decoration-color: var(--chalk-faint); }
+  .p-out-badge {
+    margin-top: 8px; font-size: 11px; font-weight: 600; color: var(--red);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .p-champion-badge {
+    margin-top: 8px; font-size: 11px; font-weight: 700; color: var(--ometis-orange);
+  }
 
   /* ── JOURNEY ── */
   .journey-picker {
@@ -447,6 +457,55 @@
   .stage-result.loss { color: var(--red); }
   .stage-result.draw { color: var(--ometis-orange); }
   .stage-result.tbd { color: var(--chalk-faint); font-size: 12px; font-weight: 400; }
+
+  /* ── LEADERBOARD ── */
+  .lb-legend {
+    display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 14px; font-size: 12px; color: var(--chalk-dim);
+  }
+  .lb-legend span { display: flex; align-items: center; gap: 6px; }
+  .lb-legend .lb-note { color: var(--chalk-faint); font-style: italic; margin-left: auto; }
+  .lb-dot { width: 9px; height: 9px; border-radius: 50% !important; display: inline-block; }
+  .lb-dot.alive { background: var(--green); }
+  .lb-dot.out   { background: var(--red); }
+  .lb-dot.won   { background: var(--ometis-orange); }
+
+  .lb-table { background: var(--ometis-dark2); border: 1px solid var(--ometis-border); overflow: hidden; }
+  .lb-head, .lb-row {
+    display: grid;
+    grid-template-columns: 40px 1.4fr 1.6fr 44px 90px 60px 54px 110px;
+    align-items: center; padding: 11px 20px; gap: 8px;
+  }
+  .lb-head {
+    background: var(--masters-green); color: rgba(255,255,255,0.9);
+    font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    border-bottom: 1px solid var(--masters-green-d);
+  }
+  .lb-row { border-bottom: 1px solid var(--ometis-border); font-size: 13px; transition: background 0.12s; }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row:hover { background: var(--ometis-dark3); }
+  .lb-row.out { opacity: 0.5; }
+  .lb-row.won { background: var(--accent-tint); }
+  .lb-rank { font-size: 12px; color: var(--chalk-faint); font-weight: 600; }
+  .lb-rank.top3 { color: var(--ometis-orange); font-weight: 800; }
+  .lb-name { font-weight: 700; }
+  .lb-team { font-size: 12px; color: var(--chalk-dim); }
+  .lb-team.team-out { text-decoration: line-through; text-decoration-color: var(--chalk-faint); color: var(--chalk-faint); }
+  .lb-num { font-size: 12px; color: var(--chalk-dim); text-align: center; }
+  .lb-pts { font-size: 15px; font-weight: 800; color: var(--chalk); text-align: center; }
+  .lb-status {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+    padding: 3px 8px; border: 1px solid transparent; white-space: nowrap;
+  }
+  .lb-status.alive { color: var(--green);  background: rgba(46,152,65,0.10);  border-color: rgba(46,152,65,0.25); }
+  .lb-status.out   { color: var(--red);    background: rgba(178,58,48,0.08);  border-color: rgba(178,58,48,0.22); }
+  .lb-status.won   { color: var(--ometis-orange); background: var(--accent-tint); border-color: var(--accent-tint-2); }
+  .lb-prematch { padding: 16px 20px; font-size: 13px; color: var(--chalk-dim); border-bottom: 1px solid var(--ometis-border); }
+  @media(max-width:680px){
+    .lb-head, .lb-row { grid-template-columns: 30px 1fr 1fr 50px 90px; }
+    .lb-head > *:nth-child(6), .lb-row > *:nth-child(6),
+    .lb-head > *:nth-child(4), .lb-row > *:nth-child(4) { display: none; }
+  }
 
   /* ── ODDS TABLE ── */
   .odds-filters { display: flex; gap: 7px; margin-bottom: 14px; flex-wrap: wrap; }
@@ -630,6 +689,7 @@
 <!-- NAV -->
 <nav>
   <button class="active" onclick="showView('today',this)">Today's Fixtures</button>
+  <button onclick="showView('leaderboard',this)">Leaderboard</button>
   <button onclick="showView('sweep',this)">Sweepstakes</button>
   <button onclick="showView('journey',this)">Team Journey</button>
   <button onclick="showView('odds',this)">Tournament Odds</button>
@@ -645,6 +705,25 @@
       <div class="fixtures-date" id="fixtures-date"></div>
     </div>
     <div id="today-h2h-grid"></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="view" id="view-leaderboard">
+    <div class="eyebrow">Standings · <span class="accent">Who's winning the sweepstake</span></div>
+    <h2>Leaderboard</h2>
+    <div class="lb-legend">
+      <span><i class="lb-dot alive"></i> Still in</span>
+      <span><i class="lb-dot out"></i> Knocked out</span>
+      <span><i class="lb-dot won"></i> Champion</span>
+      <span class="lb-note">Group-stage points (3 / 1 / 0); ties broken by goal difference.</span>
+    </div>
+    <div class="lb-table">
+      <div class="lb-head">
+        <div>#</div><div>Participant</div><div>Team</div>
+        <div>P</div><div>W-D-L</div><div>GD</div><div>Pts</div><div>Status</div>
+      </div>
+      <div id="lb-rows"></div>
+    </div>
   </div>
 
   <!-- SWEEPSTAKES -->
@@ -873,6 +952,95 @@ function getTodayFixtures() {
   return ALL_FIXTURES.filter(f => f.bstDate === today);
 }
 
+// ═══════════════════════════════════════════════════════
+// STANDINGS ENGINE — derive each team's tournament state from live results.
+// Returns { TeamName: { played, w, d, l, gf, ga, gd, pts, groupRank,
+//                       koWins, status } } where status ∈ alive|out|won.
+// ═══════════════════════════════════════════════════════
+const KO_ORDER = ['Round of 32','Round of 16','Quarter-final','Semi-final','Final'];
+
+function computeTeamStates() {
+  const st = {};
+  for (const name of Object.keys(TEAMS)) {
+    st[name] = { played:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0,
+                 groupRank:null, koWins:0, lostKO:false, wonFinal:false, status:'alive' };
+  }
+
+  // 1) Tally group-stage results.
+  for (const f of ALL_FIXTURES) {
+    if (!f.group || !f.played) continue;
+    const A = st[f.teamA], B = st[f.teamB];
+    if (!A || !B) continue;
+    A.played++; B.played++;
+    A.gf += f.scoreA; A.ga += f.scoreB;
+    B.gf += f.scoreB; B.ga += f.scoreA;
+    if (f.scoreA > f.scoreB)      { A.w++; A.pts += 3; B.l++; }
+    else if (f.scoreA < f.scoreB) { B.w++; B.pts += 3; A.l++; }
+    else                          { A.d++; B.d++; A.pts++; B.pts++; }
+  }
+  for (const t of Object.values(st)) t.gd = t.gf - t.ga;
+
+  // 2) Rank within each group (pts, then GD, then GF).
+  const byGroup = {};
+  for (const [name, t] of Object.entries(st)) {
+    const g = TEAMS[name].group;
+    (byGroup[g] = byGroup[g] || []).push(name);
+  }
+  for (const names of Object.values(byGroup)) {
+    names.sort((a,b) => st[b].pts - st[a].pts || st[b].gd - st[a].gd || st[b].gf - st[a].gf);
+    names.forEach((n,i) => st[n].groupRank = i + 1);
+  }
+
+  // 3) Knockout results: a loss eliminates; track wins; final winner = champion.
+  for (const f of ALL_FIXTURES) {
+    if (f.group || !f.played) continue;            // knockout only
+    if (!KO_ORDER.includes(f.round)) continue;     // skip 3rd-place match
+    const A = st[f.teamA], B = st[f.teamB];
+    if (!A || !B) continue;
+    const aWon = f.scoreA > f.scoreB;              // KOs always have a winner
+    const winner = aWon ? A : B, loser = aWon ? B : A;
+    winner.koWins++;
+    loser.lostKO = true;
+    if (f.round === 'Final') winner.wonFinal = true;
+  }
+
+  // 4) Resolve status.
+  for (const [name, t] of Object.entries(st)) {
+    if (t.wonFinal) { t.status = 'won'; continue; }
+    if (t.lostKO)   { t.status = 'out'; continue; }
+    // Out if group stage complete (3 games) and finished bottom of the group.
+    if (t.played >= 3 && t.groupRank === 4) { t.status = 'out'; continue; }
+    t.status = 'alive';
+  }
+  return st;
+}
+
+// Aggregate team states up to each participant for the leaderboard.
+// A participant's points = sum of their teams' points; status = best of their
+// teams (won > alive > out). Sorted by status, then points, then GD.
+function computeLeaderboard() {
+  const states = computeTeamStates();
+  const rank = { won:0, alive:1, out:2 };          // for sorting (lower = better)
+  const rows = PARTICIPANTS.map(p => {
+    const teamStates = p.teams.map(t => ({ team:t, ...states[t] }));
+    const agg = teamStates.reduce((a,s) => ({
+      pts:a.pts+s.pts, w:a.w+s.w, d:a.d+s.d, l:a.l+s.l,
+      gf:a.gf+s.gf, ga:a.ga+s.ga, played:a.played+s.played,
+    }), {pts:0,w:0,d:0,l:0,gf:0,ga:0,played:0});
+    agg.gd = agg.gf - agg.ga;
+    // Best status across the participant's team(s).
+    const status = teamStates.some(s => s.status==='won') ? 'won'
+                 : teamStates.some(s => s.status==='alive') ? 'alive' : 'out';
+    return { ...p, ...agg, status, teamStates };
+  });
+  rows.sort((a,b) =>
+    rank[a.status] - rank[b.status] ||
+    b.pts - a.pts || b.gd - a.gd || b.gf - a.gf ||
+    a.name.localeCompare(b.name)
+  );
+  return rows;
+}
+
 // Journeys are built on the fly from the live openfootball fixtures
 // (see buildJourney). The knockout rounds are appended as placeholders
 // since the bracket isn't known until the group stage finishes.
@@ -989,10 +1157,12 @@ async function init() {
   document.getElementById('today-h2h-grid').innerHTML =
     `<div class="empty"><div class="ei">📡</div>Loading today's fixtures…</div>`;
 
-  // Fetch the live fixtures, then render today
+  // Fetch the live fixtures, then render the result-dependent views
   await fetchFixtures();
   TODAY_MATCHES = getTodayFixtures();
   renderTodayMatches();
+  renderLeaderboard();
+  renderAllParticipants();   // re-render now that knocked-out status is known
 }
 
 function showView(id, btn) {
@@ -1000,6 +1170,17 @@ function showView(id, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + id).classList.add('active');
   btn.classList.add('active');
+}
+
+// Switch to the Team Journey view and show a given team, locating the right
+// nav + picker buttons by content (robust to nav re-ordering).
+function gotoJourney(team) {
+  const navBtn = [...document.querySelectorAll('nav button')]
+    .find(b => /journey/i.test(b.getAttribute('onclick') || ''));
+  if (navBtn) showView('journey', navBtn);
+  const pickBtn = [...document.querySelectorAll('.journey-picker button')]
+    .find(b => b.textContent.trim().endsWith(team));
+  if (pickBtn) showJourney(team, pickBtn);
 }
 
 // Helper: build a map of {teamName: participant} for teams playing today
@@ -1058,11 +1239,49 @@ function renderTodayMatches() {
 function renderTodayParticipants() { /* merged into renderTodayMatches */ }
 function renderMatchOdds() { /* merged into renderTodayMatches */ }
 
+// LEADERBOARD
+function renderLeaderboard() {
+  const rows = computeLeaderboard();
+  const el = document.getElementById('lb-rows');
+  if (!el) return;
+
+  const statusLabel = { won:'CHAMPION', alive:'Still in', out:'Out' };
+  const anyPlayed = rows.some(r => r.played > 0);
+
+  el.innerHTML = rows.map((r, i) => {
+    // Per-participant team flags (greying the out ones).
+    const teamCell = r.teamStates.map(s => {
+      const td = TEAMS[s.team];
+      const dim = s.status === 'out' ? ' team-out' : '';
+      return `<span class="lb-team${dim}">${td?.flag||'🏳️'} ${s.team}</span>`;
+    }).join('<br>');
+
+    const rec = `${r.w}-${r.d}-${r.l}`;
+    const gd = r.gd > 0 ? `+${r.gd}` : `${r.gd}`;
+    return `<div class="lb-row ${r.status}">
+      <div class="lb-rank ${i<3 && r.status!=='out' ? 'top3' : ''}">${i+1}</div>
+      <div class="lb-name">${r.name}</div>
+      <div>${teamCell}</div>
+      <div class="lb-num">${r.played}</div>
+      <div class="lb-num">${rec}</div>
+      <div class="lb-num">${r.played ? gd : '—'}</div>
+      <div class="lb-pts">${r.pts}</div>
+      <div><span class="lb-status ${r.status}">${statusLabel[r.status]}</span></div>
+    </div>`;
+  }).join('');
+
+  if (!anyPlayed) {
+    el.insertAdjacentHTML('afterbegin',
+      `<div class="lb-prematch">⚽ No results yet — the table comes alive once matches are played. Order below is the draw order.</div>`);
+  }
+}
+
 // ALL PARTICIPANTS
 
 function renderAllParticipants(filter='') {
   const c = document.getElementById('all-participants');
   const todaySet = new Set(TODAY_MATCHES.flatMap(m => [m.teamA, m.teamB]));
+  const states = ALL_FIXTURES.length ? computeTeamStates() : null;
   document.getElementById('sweep-count').textContent = `${PARTICIPANTS.length} People`;
   const list = PARTICIPANTS.filter(p => {
     if (!filter) return true;
@@ -1073,12 +1292,17 @@ function renderAllParticipants(filter='') {
     const play = p.teams.some(t => todaySet.has(t));
     const main = p.teams[0]; const td = TEAMS[main];
     const extra = p.teams.slice(1);
-    return `<div class="p-card ${play ? 'playing' : ''}" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">
+    // Eliminated only when every team they hold is out.
+    const eliminated = states && p.teams.every(t => states[t]?.status === 'out');
+    const champion   = states && p.teams.some(t => states[t]?.status === 'won');
+    return `<div class="p-card ${play ? 'playing' : ''} ${eliminated ? 'eliminated' : ''}" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">
       <div class="p-name">${p.name}</div>
       <div class="p-team"><span class="p-flag">${td?.flag||'🏳️'}</span>${main}</div>
       ${extra.length ? `<div class="p-extra">${extra.map(t=>`${TEAMS[t]?.flag||''} ${t}`).join(' · ')}</div>` : ''}
       ${p.teams.length === 2 ? `<div class="two-team-tag">2-team draw</div>` : ''}
-      ${play ? `<div class="p-playing-badge">Playing today</div>` : ''}
+      ${champion ? `<div class="p-champion-badge">🏆 Champion</div>` : ''}
+      ${eliminated ? `<div class="p-out-badge">Knocked out</div>`
+                   : play ? `<div class="p-playing-badge">Playing today</div>` : ''}
       <div class="p-odds-badge">${td?.odds_frac||'N/A'} <span class="p-odds-label">to win</span></div>
     </div>`;
   }).join('');
@@ -1192,7 +1416,7 @@ function openModal(name) {
       </div>
     </div>
     ${teamsHtml}
-    <button class="btn-primary" style="width:100%;margin-top:18px" onclick="document.getElementById('modal').classList.remove('open');showView('journey',document.querySelector('nav button:nth-child(3)'));showJourney('${p.teams[0]}',document.querySelector('.journey-picker button'))">
+    <button class="btn-primary" style="width:100%;margin-top:18px" onclick="document.getElementById('modal').classList.remove('open');gotoJourney('${p.teams[0].replace(/'/g,"\\'")}')">
       View ${p.teams[0]}'s Journey →
     </button>`;
   document.getElementById('modal').classList.add('open');
