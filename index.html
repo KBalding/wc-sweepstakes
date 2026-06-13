@@ -854,16 +854,23 @@ const KNOCKOUT_STAGES = [
   {stage:"Final",         date:"19 Jul"},
 ];
 
-// Build a team's full path from the fetched fixtures. Returns an array of
-// stage rows (group games from real data + knockout placeholders).
+// Round labels as they appear in the openfootball feed, mapped to the stages
+// we show. Once the group stage resolves, real knockout fixtures arrive under
+// these round names and replace the TBD placeholders below.
+const KNOCKOUT_ROUNDS = {
+  "Round of 32":   "Round of 32",
+  "Round of 16":   "Round of 16",
+  "Quarter-final": "Quarter-final",
+  "Semi-final":    "Semi-final",
+  "Final":         "Final",
+};
+
+// Build a team's full path from the fetched fixtures. Group games + knockout
+// games both come from the live feed when available; knockout rounds the team
+// hasn't reached (or that aren't drawn yet) show as TBD placeholders.
 function buildJourney(name) {
   const today = getTodayBSTDate();
   const flag = t => TEAMS[t]?.flag || '🏳️';
-
-  // Every group fixture this team appears in, in date order
-  const teamFixtures = ALL_FIXTURES
-    .filter(f => f.teamA === name || f.teamB === name)
-    .sort((a,b) => (a.bstDate||'').localeCompare(b.bstDate||''));
 
   const dateLabel = bstDate => {
     if (!bstDate) return 'TBC';
@@ -871,14 +878,13 @@ function buildJourney(name) {
     return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', timeZone:'UTC'});
   };
 
-  const groupRows = teamFixtures.map((f, i) => {
-    // A score is the definitive signal a game is done; fall back to date.
+  // Turn one real fixture into a stage row (shared by group + knockout).
+  const rowFromFixture = (f, stageLabel) => {
     let status = 'upcoming';
     if (f.played) status = 'completed';
     else if (f.bstDate && f.bstDate < today) status = 'completed';
     else if (f.bstDate === today) status = 'current';
 
-    // Result from this team's perspective: W / L / D + scoreline
     let result = null, outcome = null;
     if (f.played) {
       const isA = f.teamA === name;
@@ -889,20 +895,34 @@ function buildJourney(name) {
       result = `${letter} ${f.scoreA}–${f.scoreB}`;
     }
 
-    const grp = f.group ? `Group ${f.group} — Game ${i+1}` : (f.round || 'Group stage');
     return {
-      stage: grp,
+      stage: stageLabel,
       match: `${f.teamA} ${flag(f.teamA)} vs ${flag(f.teamB)} ${f.teamB}`,
       date: dateLabel(f.bstDate),
       result,
       outcome,
       status,
     };
-  });
+  };
 
-  const knockoutRows = KNOCKOUT_STAGES.map(k => ({
-    stage: k.stage, match: 'TBD', date: k.date, result: null, status: 'pending',
-  }));
+  // All of this team's fixtures from the feed, split into group vs knockout.
+  const teamFixtures = ALL_FIXTURES
+    .filter(f => f.teamA === name || f.teamB === name)
+    .sort((a,b) => (a.bstDate||'').localeCompare(b.bstDate||''));
+  const groupFixtures = teamFixtures.filter(f => f.group);
+  const koFixtures = teamFixtures.filter(f => !f.group && KNOCKOUT_ROUNDS[f.round]);
+
+  const groupRows = groupFixtures.map((f, i) =>
+    rowFromFixture(f, `Group ${f.group} — Game ${i+1}`)
+  );
+
+  // For each knockout stage, use the real fixture if the team has one,
+  // otherwise fall back to the TBD placeholder.
+  const knockoutRows = KNOCKOUT_STAGES.map(k => {
+    const real = koFixtures.find(f => KNOCKOUT_ROUNDS[f.round] === k.stage);
+    if (real) return rowFromFixture(real, k.stage);
+    return { stage: k.stage, match: 'TBD', date: k.date, result: null, outcome: null, status: 'pending' };
+  });
 
   return [...groupRows, ...knockoutRows];
 }
