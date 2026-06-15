@@ -1,10 +1,15 @@
-// scripts/notify.js
-// Daily WC26 Sweepstakes Slack alert.
-// Fetches today's fixtures from openfootball, looks up which colleagues own
-// each team, and posts a head-to-head message to Slack.
+// scripts/results.js
+// Daily WC26 Sweepstakes Slack RESULTS recap.
+// Fetches yesterday's played fixtures from openfootball, looks up which
+// colleagues own each team, and posts the scores — with spicy banter for
+// every colleague clash — to Slack.
 //
-// Triggered by .github/workflows/daily-alert.yml on a daily cron.
+// Triggered by .github/workflows/daily-results.yml on a daily morning cron.
 // Requires SLACK_WEBHOOK env var (set as a GitHub Actions secret).
+//
+// "Yesterday" is defined as the previous US Eastern match-day, matching the
+// bucketing in notify.js: a late kickoff shown at 00:00–03:00 BST belongs to
+// the previous evening's session, not the next BST calendar day.
 
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +28,7 @@ if (!SLACK_WEBHOOK) {
 // ─────────────────────────────────────────────────────────────
 // TEAMS — flag, group, tournament outright odds (UK fractional)
 // To refresh odds, ask Claude to regenerate this section.
+// Kept in sync with scripts/notify.js.
 // ─────────────────────────────────────────────────────────────
 const TEAMS = {
   // Group A
@@ -87,6 +93,43 @@ const TEAMS = {
   'Panama':              { flag:'🇵🇦', group:'L', odds:'500/1' },
 };
 
+// ─────────────────────────────────────────────────────────────
+// BANTER — spicy results commentary. Edit freely.
+// {W} = winning colleague, {L} = losing colleague, {WT}/{LT} = their teams.
+// One line is picked at random from the pool that fits the scoreline.
+// ─────────────────────────────────────────────────────────────
+const BANTER = {
+  // Won by 3+ goals.
+  thrashing: [
+    '🪦 RIP {L}’s {LT}. {W} didn’t just win, they sent a message. Awkward standup tomorrow.',
+    '💀 {L} got absolutely battered. {W} strolls it — get the coffees in, {L}.',
+    '🚨 Somebody check on {L}. {WT} put {LT} to the sword and {W} is insufferable about it.',
+    '🧹 Clean sweep for {W}. {L}, maybe don’t open Slack today.',
+  ],
+  // Won by exactly 2.
+  comfortable: [
+    '😎 Comfortable in the end for {W}. {L}’s {LT} never really turned up.',
+    '✅ {W} had a bit to spare. {L} will say it was closer than the scoreline. It wasn’t.',
+    '☕ Two clear goals. {W} collects, {L} pays up.',
+  ],
+  // Won by exactly 1.
+  narrow: [
+    '😅 {L} so nearly had it. {W} nicks it and won’t let you forget.',
+    '🥶 Heartbreak for {L}. {W} edges a tight one — daylight robbery, frankly.',
+    '⚡ Fine margins. {W} takes the bragging rights over {L} by a single goal.',
+  ],
+  // Draw between two owned teams.
+  draw: [
+    '🤝 Honours even — {W} and {L} share the spoils. Nobody buys coffee. Disappointing for everyone.',
+    '😐 A {WT}–{LT} stalemate. {W} and {L} both claim a moral victory, both are wrong.',
+  ],
+  // Same person owns both teams.
+  selfClash: [
+    '🤡 {W} beat… {W}. A truly pointless afternoon’s work.',
+    '🪞 {W}’s {WT} beat {W}’s {LT}. The only winner is also the only loser. Poetic.',
+  ],
+};
+
 // Overlay live odds (refreshed daily by fetch-odds.js into odds.json) onto the
 // baseline TEAMS above. Teams the bookmakers don't list keep their fallback odds.
 try {
@@ -113,13 +156,9 @@ const PARTICIPANTS = JSON.parse(
 // Helpers
 // ─────────────────────────────────────────────────────────────
 
-// Convert openfootball "13:00 UTC-6" + date "2026-06-11" into:
-//   timeStr   — kickoff displayed in BST (what colleagues read)
-//   matchDay  — the US Eastern calendar date the game belongs to.
-// We bucket by US Eastern (the host timezone) rather than BST so that a
-// late kickoff which lands at 00:00–03:00 BST (i.e. still the previous
-// evening in the US) groups with that evening's session instead of leaking
-// into the next morning's alert. Kickoff time is still shown in BST.
+// Convert openfootball "13:00 UTC-6" + date "2026-06-11" into a BST kickoff
+// time plus the US Eastern calendar date the match belongs to (the match-day).
+// See notify.js for why we bucket by US Eastern rather than BST.
 function toBST(time, date) {
   const m = time.match(/(\d{1,2}):(\d{2})\s+UTC([+-]\d+)/);
   if (!m) return { timeStr: time, matchDay: date };
@@ -133,97 +172,149 @@ function toBST(time, date) {
   return { timeStr, matchDay };
 }
 
-// Today's match day, defined in US Eastern to match the bucketing above.
-function getTodayMatchDay() {
-  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+// Yesterday's match day, in US Eastern, as YYYY-MM-DD.
+// FORCE_MATCH_DAY (YYYY-MM-DD) overrides it — handy for manually backfilling a
+// missed day from the Actions tab.
+function getYesterdayMatchDay() {
+  const forced = (process.env.FORCE_MATCH_DAY || '').trim();
+  if (forced) return forced;
+  const now = new Date();
+  // Shift back 24h, then read the date in US Eastern. Robust enough at the
+  // ~08:00 BST run time, where we're nowhere near a day boundary either side.
+  const y = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  return y.toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 }
 
 function findOwner(teamName) {
   return PARTICIPANTS.find(p => p.teams.includes(teamName));
 }
 
-async function fetchTodayFixtures() {
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+async function fetchResults(matchDay) {
   const resp = await fetch(FIXTURES_URL);
   if (!resp.ok) throw new Error(`Fetch failed: HTTP ${resp.status}`);
   const data = await resp.json();
-  const today = getTodayMatchDay();
   return (data.matches || [])
     .map(raw => {
       const bst = toBST(raw.time || '', raw.date || '');
+      const ft = raw.score && Array.isArray(raw.score.ft) ? raw.score.ft : null;
       return {
         teamA: raw.team1,
         teamB: raw.team2,
         group: (raw.group || '').replace(/^Group\s+/i, ''),
         round: raw.round || '',
-        ground: raw.ground || '',
         time: bst.timeStr,
         matchDay: bst.matchDay,
+        scoreA: ft ? ft[0] : null,
+        scoreB: ft ? ft[1] : null,
+        played: !!ft,
       };
     })
-    .filter(f => f.matchDay === today)
-    .filter(f => TEAMS[f.teamA] && TEAMS[f.teamB]); // drop knockout placeholders
+    .filter(f => f.matchDay === matchDay)
+    .filter(f => TEAMS[f.teamA] && TEAMS[f.teamB]) // drop knockout placeholders
+    .filter(f => f.played); // only matches with a final score
 }
 
-function buildSlackMessage(fixtures) {
-  if (!fixtures.length) {
+// Build the banter line for one result. Returns '' when there's nothing to
+// say (e.g. one side is unassigned).
+function banterFor(f, pA, pB) {
+  // Trim a trailing period off names (e.g. "Amy N.") so banter lines that end
+  // in their own punctuation don't read "Amy N..".
+  const nm = n => n.replace(/\.$/, '');
+  const fill = (s, w, l) => s
+    .replaceAll('{W}', nm(w.owner.name))
+    .replaceAll('{L}', nm(l.owner.name))
+    .replaceAll('{WT}', w.team)
+    .replaceAll('{LT}', l.team);
+
+  // Unassigned on either side → state the result, skip the ribbing.
+  if (!pA || !pB) return '';
+
+  const a = { owner: pA, team: f.teamA, score: f.scoreA };
+  const b = { owner: pB, team: f.teamB, score: f.scoreB };
+  const diff = Math.abs(a.score - b.score);
+
+  if (a.score === b.score) {
+    // Draw. Order doesn't matter; treat A as {W} slot for templating.
+    return fill(pick(BANTER.draw), a, b);
+  }
+
+  const winner = a.score > b.score ? a : b;
+  const loser  = a.score > b.score ? b : a;
+
+  if (winner.owner.name === loser.owner.name) {
+    return fill(pick(BANTER.selfClash), winner, loser);
+  }
+
+  const tier = diff >= 3 ? BANTER.thrashing : diff === 2 ? BANTER.comfortable : BANTER.narrow;
+  return fill(pick(tier), winner, loser);
+}
+
+function buildSlackMessage(results, matchDay) {
+  const dateStr = new Date(matchDay + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC',
+  });
+
+  if (!results.length) {
     return {
-      text: '🛌 No World Cup fixtures today. Rest day.',
+      text: `No results to report for ${dateStr}.`,
+      blocks: [
+        { type: 'header', text: { type: 'plain_text', text: `📋 Results — ${dateStr}`, emoji: true } },
+        { type: 'section', text: { type: 'mrkdwn', text: '🛌 No matches played. A quiet one. Standings unchanged.' } },
+      ],
     };
   }
 
-  // Sort by time
-  fixtures.sort((a, b) => a.time.localeCompare(b.time));
-
-  const dateStr = new Date().toLocaleDateString('en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long',
-    timeZone: 'Europe/London',
-  });
+  // Group games before knockouts, then by kickoff time.
+  results.sort((a, b) => a.time.localeCompare(b.time));
 
   const blocks = [
     {
       type: 'header',
-      text: { type: 'plain_text', text: `⚔ Today's head-to-heads — ${dateStr}`, emoji: true },
+      text: { type: 'plain_text', text: `📋 Last night’s results — ${dateStr}`, emoji: true },
     },
     {
       type: 'context',
-      elements: [{ type: 'mrkdwn', text: `*${fixtures.length}* fixture${fixtures.length === 1 ? '' : 's'} on the slate. Every match is a colleague clash.` }],
+      elements: [{ type: 'mrkdwn', text: `*${results.length}* match${results.length === 1 ? '' : 'es'} in the books. The damage report:` }],
     },
     { type: 'divider' },
   ];
 
-  for (const f of fixtures) {
+  for (const f of results) {
     const tA = TEAMS[f.teamA];
     const tB = TEAMS[f.teamB];
     const pA = findOwner(f.teamA);
     const pB = findOwner(f.teamB);
     const groupLabel = f.group ? `Group ${f.group}` : (f.round || 'Knockout');
-    const venue = f.ground ? ` · 📍 ${f.ground}` : '';
 
-    const aName = pA ? `*${pA.name}* (${pA.slack})` : '_Unassigned_';
-    const bName = pB ? `*${pB.name}* (${pB.slack})` : '_Unassigned_';
-    const selfClash = pA && pB && pA.name === pB.name ? ' _(self-clash!)_' : '';
+    // Bold the winning team's score.
+    const aWon = f.scoreA > f.scoreB;
+    const bWon = f.scoreB > f.scoreA;
+    const sA = aWon ? `*${f.scoreA}*` : `${f.scoreA}`;
+    const sB = bWon ? `*${f.scoreB}*` : `${f.scoreB}`;
 
-    blocks.push({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text:
-          `🟢 *${groupLabel}*  ·  🕐 ${f.time} BST${venue}\n` +
-          `${aName}  ${tA.flag} *${f.teamA}*  ⚔  *${f.teamB}* ${tB.flag}  ${bName}${selfClash}\n` +
-          `_Outright: ${f.teamA} ${tA.odds}  ·  ${f.teamB} ${tB.odds}_`,
-      },
-    });
+    const aName = pA ? `(${pA.slack})` : '_(unassigned)_';
+    const bName = pB ? `(${pB.slack})` : '_(unassigned)_';
+
+    let line =
+      `🟢 *${groupLabel}*\n` +
+      `${tA.flag} *${f.teamA}* ${aName}  ${sA}–${sB}  *${f.teamB}* ${tB.flag} ${bName}`;
+
+    const banter = banterFor(f, pA, pB);
+    if (banter) line += `\n${banter}`;
+
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: line } });
   }
 
-  const footer = '☕ on the line. Or pride. Or both.' +
-    (SITE_URL ? `  ·  <${SITE_URL}|View the sweepstakes board →>` : '');
-  blocks.push({
-    type: 'context',
-    elements: [{ type: 'mrkdwn', text: footer }],
-  });
+  const footer = '🏆 Bragging rights updated.' +
+    (SITE_URL ? `  ·  <${SITE_URL}|See the full board →>` : '');
+  blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: footer }] });
 
   return {
-    text: `Today's head-to-heads — ${fixtures.length} fixture${fixtures.length === 1 ? '' : 's'}`, // fallback for notifications
+    text: `Last night's results — ${results.length} match${results.length === 1 ? '' : 'es'}`, // notification fallback
     blocks,
   };
 }
@@ -245,11 +336,12 @@ async function postToSlack(payload) {
 // ─────────────────────────────────────────────────────────────
 (async () => {
   try {
-    const fixtures = await fetchTodayFixtures();
-    console.log(`Found ${fixtures.length} fixtures for today.`);
-    const payload = buildSlackMessage(fixtures);
+    const matchDay = getYesterdayMatchDay();
+    const results = await fetchResults(matchDay);
+    console.log(`Found ${results.length} played fixtures for ${matchDay}.`);
+    const payload = buildSlackMessage(results, matchDay);
     await postToSlack(payload);
-    console.log('✅ Slack alert sent.');
+    console.log('✅ Results recap sent.');
   } catch (err) {
     console.error('❌ Failed:', err);
     process.exit(1);

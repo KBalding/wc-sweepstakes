@@ -896,10 +896,15 @@ const FIXTURES_URL = "https://raw.githubusercontent.com/openfootball/worldcup.js
 let ALL_FIXTURES = [];     // Full tournament, populated on load
 let TODAY_MATCHES = [];    // Filtered to today (BST)
 
-// Convert openfootball time (e.g. "13:00 UTC-6") on a given date to BST
+// Convert openfootball time (e.g. "13:00 UTC-6") on a given date into a BST
+// kickoff time plus the US Eastern calendar date the match belongs to.
+// We bucket by US Eastern (the host timezone) rather than BST so a late
+// kickoff landing at 00:00–03:00 BST (still the previous evening in the US)
+// groups with that evening's session instead of the next BST day. Kickoff
+// time is still displayed in BST.
 function toBST(time, date) {
   const m = time.match(/(\d{1,2}):(\d{2})\s+UTC([+-]\d+)/);
-  if (!m) return { timeStr: time, dateStr: date };
+  if (!m) return { timeStr: time, matchDay: date };
   const localH = parseInt(m[1]);
   const localM = parseInt(m[2]);
   const offset = parseInt(m[3]);  // e.g. -6 for UTC-6
@@ -907,12 +912,13 @@ function toBST(time, date) {
   const d = new Date(`${date}T${String(localH).padStart(2,'0')}:${String(localM).padStart(2,'0')}:00Z`);
   d.setUTCHours(d.getUTCHours() - offset);
   const timeStr = d.toLocaleString('en-GB', {timeZone:'Europe/London', hour:'2-digit', minute:'2-digit', hour12:false});
-  const dateStr = d.toLocaleDateString('en-CA', {timeZone:'Europe/London'}); // YYYY-MM-DD
-  return { timeStr, dateStr };
+  const matchDay = d.toLocaleDateString('en-CA', {timeZone:'America/New_York'}); // YYYY-MM-DD
+  return { timeStr, matchDay };
 }
 
-function getTodayBSTDate() {
-  return new Date().toLocaleDateString('en-CA', {timeZone:'Europe/London'});
+// Today's match day, defined in US Eastern to match the bucketing above.
+function getTodayMatchDay() {
+  return new Date().toLocaleDateString('en-CA', {timeZone:'America/New_York'});
 }
 
 // Normalize an openfootball fixture into our internal shape
@@ -927,7 +933,7 @@ function normalizeFixture(raw) {
     round: raw.round || '',
     ground: raw.ground || '',
     time: bst.timeStr,
-    bstDate: bst.dateStr,
+    matchDay: bst.matchDay,
     rawDate: raw.date,
     scoreA: ft ? ft[0] : null,
     scoreB: ft ? ft[1] : null,
@@ -953,8 +959,8 @@ async function fetchFixtures() {
 }
 
 function getTodayFixtures() {
-  const today = getTodayBSTDate();
-  return ALL_FIXTURES.filter(f => f.bstDate === today);
+  const today = getTodayMatchDay();
+  return ALL_FIXTURES.filter(f => f.matchDay === today);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1072,12 +1078,12 @@ const KNOCKOUT_ROUNDS = {
 // games both come from the live feed when available; knockout rounds the team
 // hasn't reached (or that aren't drawn yet) show as TBD placeholders.
 function buildJourney(name) {
-  const today = getTodayBSTDate();
+  const today = getTodayMatchDay();
   const flag = t => TEAMS[t]?.flag || '🏳️';
 
-  const dateLabel = bstDate => {
-    if (!bstDate) return 'TBC';
-    const d = new Date(bstDate + 'T12:00:00Z');
+  const dateLabel = matchDay => {
+    if (!matchDay) return 'TBC';
+    const d = new Date(matchDay + 'T12:00:00Z');
     return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', timeZone:'UTC'});
   };
 
@@ -1085,8 +1091,8 @@ function buildJourney(name) {
   const rowFromFixture = (f, stageLabel) => {
     let status = 'upcoming';
     if (f.played) status = 'completed';
-    else if (f.bstDate && f.bstDate < today) status = 'completed';
-    else if (f.bstDate === today) status = 'current';
+    else if (f.matchDay && f.matchDay < today) status = 'completed';
+    else if (f.matchDay === today) status = 'current';
 
     let result = null, outcome = null;
     if (f.played) {
@@ -1101,7 +1107,7 @@ function buildJourney(name) {
     return {
       stage: stageLabel,
       match: `${f.teamA} ${flag(f.teamA)} vs ${flag(f.teamB)} ${f.teamB}`,
-      date: dateLabel(f.bstDate),
+      date: dateLabel(f.matchDay),
       result,
       outcome,
       status,
@@ -1111,7 +1117,7 @@ function buildJourney(name) {
   // All of this team's fixtures from the feed, split into group vs knockout.
   const teamFixtures = ALL_FIXTURES
     .filter(f => f.teamA === name || f.teamB === name)
-    .sort((a,b) => (a.bstDate||'').localeCompare(b.bstDate||''));
+    .sort((a,b) => (a.matchDay||'').localeCompare(b.matchDay||''));
   const groupFixtures = teamFixtures.filter(f => f.group);
   const koFixtures = teamFixtures.filter(f => !f.group && KNOCKOUT_ROUNDS[f.round]);
 
