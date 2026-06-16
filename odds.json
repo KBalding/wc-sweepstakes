@@ -1,37 +1,37 @@
 {
-  "generated": "2026-06-15T13:30:28.949Z",
+  "generated": "2026-06-16T12:26:27.825Z",
   "source": "the-odds-api.com · outrights · uk · averaged across books",
   "matched": 48,
   "teams": {
     "France": {
-      "odds_frac": "23/5",
-      "odds_us": "+460",
-      "odds": "23/5",
-      "win_pct": 15.6
+      "odds_frac": "31/7",
+      "odds_us": "+445",
+      "odds": "31/7",
+      "win_pct": 16.1
     },
     "Spain": {
-      "odds_frac": "19/4",
-      "odds_us": "+475",
-      "odds": "19/4",
-      "win_pct": 15.2
+      "odds_frac": "36/7",
+      "odds_us": "+515",
+      "odds": "36/7",
+      "win_pct": 14.3
     },
     "England": {
-      "odds_frac": "36/5",
-      "odds_us": "+720",
-      "odds": "36/5",
-      "win_pct": 10.6
+      "odds_frac": "57/8",
+      "odds_us": "+710",
+      "odds": "57/8",
+      "win_pct": 10.8
     },
     "Portugal": {
-      "odds_frac": "39/5",
-      "odds_us": "+780",
-      "odds": "39/5",
-      "win_pct": 9.9
+      "odds_frac": "54/7",
+      "odds_us": "+770",
+      "odds": "54/7",
+      "win_pct": 10.1
     },
     "Argentina": {
-      "odds_frac": "41/4",
-      "odds_us": "+1025",
-      "odds": "41/4",
-      "win_pct": 7.8
+      "odds_frac": "10/1",
+      "odds_us": "+1000",
+      "odds": "10/1",
+      "win_pct": 8
     },
     "Brazil": {
       "odds_frac": "23/2",
@@ -40,16 +40,16 @@
       "win_pct": 7
     },
     "Germany": {
-      "odds_frac": "14/1",
-      "odds_us": "+1400",
-      "odds": "14/1",
-      "win_pct": 5.8
+      "odds_frac": "55/4",
+      "odds_us": "+1375",
+      "odds": "55/4",
+      "win_pct": 5.9
     },
     "Netherlands": {
-      "odds_frac": "19/1",
-      "odds_us": "+1900",
-      "odds": "19/1",
-      "win_pct": 4.4
+      "odds_frac": "37/2",
+      "odds_us": "+1850",
+      "odds": "37/2",
+      "win_pct": 4.5
     },
     "Norway": {
       "odds_frac": "67/2",
@@ -58,66 +58,66 @@
       "win_pct": 2.5
     },
     "Morocco": {
-      "odds_frac": "38/1",
-      "odds_us": "+3800",
-      "odds": "38/1",
-      "win_pct": 2.2
-    },
-    "Belgium": {
-      "odds_frac": "73/2",
-      "odds_us": "+3650",
-      "odds": "73/2",
+      "odds_frac": "37/1",
+      "odds_us": "+3700",
+      "odds": "37/1",
       "win_pct": 2.3
     },
     "USA": {
+      "odds_frac": "87/2",
+      "odds_us": "+4350",
+      "odds": "87/2",
+      "win_pct": 2
+    },
+    "Belgium": {
       "odds_frac": "89/2",
       "odds_us": "+4450",
       "odds": "89/2",
       "win_pct": 1.9
     },
     "Japan": {
-      "odds_frac": "52/1",
-      "odds_us": "+5200",
-      "odds": "52/1",
-      "win_pct": 1.6
-    },
-    "Colombia": {
-      "odds_frac": "57/1",
-      "odds_us": "+5700",
-      "odds": "57/1",
-      "win_pct": 1.5
+      "odds_frac": "99/2",
+      "odds_us": "+4950",
+      "odds": "99/2",
+      "win_pct": 1.7
     },
     "Mexico": {
-      "odds_frac": "62/1",
-      "odds_us": "+6200",
-      "odds": "62/1",
+      "odds_frac": "129/2",
+      "odds_us": "+6450",
+      "odds": "129/2",
+      "win_pct": 1.3
+    },
+    "Colombia": {
+      "odds_frac": "119/2",
+      "odds_us": "+5950",
+      "odds": "119/2",
       "win_pct": 1.4
     },
     "Switzerland": {
-      "odds_frac": "149/2",
-      "odds_us": "+7450",
-      "odds": "149/2",
-      "win_pct": 1.2
+      "odds_frac": "159/2",
+      "odds_us": "+7950",
+      "odds": "159/2",
+      "win_pct": 1.1
     },
-    "Uruguay": {
-      "odds_frac": "175/2",
-      "odds_us": "+8750",
-      "odds": "175/2",
-      "win_pct": 1
-    },
-    "Sweden": {
-      "odds_frac": "209/2",
-      "odds_us": "+10450",
-      "odds": "209/2",
-      "win_pct": 0.8
-    },
-    "Croatia": {
+    "Senegal": {
       "odds_frac": "219/2",
       "odds_us": "+10950",
       "odds": "219/2",
       "win_pct": 0.8
     },
-    "Senegal": {
+    "Uruguay": {
+      "odds_frac": "205/2",
+      "odds_us": "+10250",
+      "odds": "205/2",
+      "win_pct": 0.8
+    },
+    "Croatia": {
+      "odds_frac": "229/2",
+      "odds_us": "+11450",
+      "odds": "229/2",
+      "win_pct": 0.8
+    },
+    "Sweden": {
       "odds_frac": "239/2",
       "odds_us": "+11950",
       "odds": "239/2",
@@ -129,58 +129,58 @@
       "odds": "259/2",
       "win_pct": 0.7
     },
-    "Ivory Coast": {
+    "Ecuador": {
       "odds_frac": "329/2",
       "odds_us": "+16450",
       "odds": "329/2",
       "win_pct": 0.5
     },
-    "Ecuador": {
-      "odds_frac": "339/2",
-      "odds_us": "+16950",
-      "odds": "339/2",
-      "win_pct": 0.5
-    },
     "Turkey": {
-      "odds_frac": "339/2",
-      "odds_us": "+16950",
-      "odds": "339/2",
-      "win_pct": 0.5
-    },
-    "Austria": {
       "odds_frac": "349/2",
       "odds_us": "+17450",
       "odds": "349/2",
       "win_pct": 0.5
     },
+    "Ivory Coast": {
+      "odds_frac": "349/2",
+      "odds_us": "+17450",
+      "odds": "349/2",
+      "win_pct": 0.5
+    },
+    "Austria": {
+      "odds_frac": "359/2",
+      "odds_us": "+17950",
+      "odds": "359/2",
+      "win_pct": 0.5
+    },
     "South Korea": {
-      "odds_frac": "529/2",
-      "odds_us": "+26450",
-      "odds": "529/2",
-      "win_pct": 0.3
-    },
-    "Canada": {
-      "odds_frac": "247/1",
-      "odds_us": "+24700",
-      "odds": "247/1",
-      "win_pct": 0.4
-    },
-    "Scotland": {
       "odds_frac": "549/2",
       "odds_us": "+27450",
       "odds": "549/2",
       "win_pct": 0.3
     },
+    "Canada": {
+      "odds_frac": "252/1",
+      "odds_us": "+25200",
+      "odds": "252/1",
+      "win_pct": 0.3
+    },
+    "Scotland": {
+      "odds_frac": "569/2",
+      "odds_us": "+28450",
+      "odds": "569/2",
+      "win_pct": 0.3
+    },
     "Egypt": {
-      "odds_frac": "909/2",
-      "odds_us": "+45450",
-      "odds": "909/2",
+      "odds_frac": "719/2",
+      "odds_us": "+35950",
+      "odds": "719/2",
       "win_pct": 0.2
     },
     "Algeria": {
-      "odds_frac": "949/2",
-      "odds_us": "+47450",
-      "odds": "949/2",
+      "odds_frac": "959/2",
+      "odds_us": "+47950",
+      "odds": "959/2",
       "win_pct": 0.2
     },
     "Ghana": {
@@ -189,16 +189,16 @@
       "odds": "1179/2",
       "win_pct": 0.1
     },
-    "Czech Republic": {
-      "odds_frac": "1149/2",
-      "odds_us": "+57450",
-      "odds": "1149/2",
-      "win_pct": 0.2
-    },
     "Bosnia & Herzegovina": {
-      "odds_frac": "1249/2",
-      "odds_us": "+62450",
-      "odds": "1249/2",
+      "odds_frac": "1179/2",
+      "odds_us": "+58950",
+      "odds": "1179/2",
+      "win_pct": 0.1
+    },
+    "Czech Republic": {
+      "odds_frac": "1299/2",
+      "odds_us": "+64950",
+      "odds": "1299/2",
       "win_pct": 0.1
     },
     "Paraguay": {
@@ -244,9 +244,9 @@
       "win_pct": 0.1
     },
     "Saudi Arabia": {
-      "odds_frac": "1999/2",
-      "odds_us": "+99950",
-      "odds": "1999/2",
+      "odds_frac": "1499/2",
+      "odds_us": "+74950",
+      "odds": "1499/2",
       "win_pct": 0.1
     },
     "Cape Verde": {
