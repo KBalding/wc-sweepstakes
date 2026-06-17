@@ -3,10 +3,10 @@ name: Update WC26 odds
 # Refreshes tournament outright odds from The Odds API and commits odds.json.
 # Both index.html and scripts/notify.js read that file.
 on:
-  schedule:
-    # 07:30 UTC daily — runs ahead of the 08:00 Slack alert so notify.js
-    # picks up fresh odds. Cron is UTC: minute hour day month weekday.
-    - cron: '30 7 * 6,7 *'
+  # schedule:
+  #   # 07:30 UTC daily — runs ahead of the 08:00 Slack alert so notify.js
+  #   # picks up fresh odds. Cron is UTC: minute hour day month weekday.
+  #   - cron: '30 7 * 6,7 *'
   workflow_dispatch:  # Allow manual triggering from the Actions tab
 
 permissions:
