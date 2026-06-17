@@ -4,11 +4,11 @@ name: Daily WC26 results recap
 # tournament, just ahead of the fixtures preview.
 # Tournament dates: 11 June – 19 July 2026
 on:
-  schedule:
-    # 07:45 UTC = 08:45 BST. After the 07:30 odds refresh, before the 08:00
-    # fixtures preview — so the channel reads "results → today's games".
-    # GitHub Actions cron uses UTC. Cron syntax: minute hour day month weekday
-    - cron: '45 7 * 6,7 *'
+  # schedule:
+  #   # 07:45 UTC = 08:45 BST. After the 07:30 odds refresh, before the 08:00
+  #   # fixtures preview — so the channel reads "results → today's games".
+  #   # GitHub Actions cron uses UTC. Cron syntax: minute hour day month weekday
+  #   - cron: '45 7 * 6,7 *'
   workflow_dispatch:  # Allow manual triggering from the Actions tab
 
 jobs:
